@@ -1,5 +1,9 @@
 # Contexto e instruções para continuar no Codex
 
+## Escopo vigente — 02/11/2026: percursos A → B
+
+A criação principal de mapas agora é uma caminhada estimada por passos/direção do celular ou um desenho manual, com saída apenas em 2D vista de cima. Leia `13-MAPAS-DE-PERCURSO.md` e a prioridade vigente de `AGENTS.md`. A captura automática é experimental e requer validação física em celular/HTTPS. O editor 3D anterior permanece secundário; não estender reconstrução nem backend nesta etapa.
+
 ## Escopo vigente — 01/11/2026
 
 Somente frontend: busca na entrada, resultados por página, tabelas com campos livres e administração separada. A prévia abre sem criar conta, com exemplos fictícios e simulação explícita dos perfis. Não integrar backend ou ler planilhas do HSP nesta etapa. Leia `docs/11-FRONT-CONSULTA-E-PAGINAS.md` e a prioridade vigente em `AGENTS.md`; elas substituem a direção de 31/10 abaixo.

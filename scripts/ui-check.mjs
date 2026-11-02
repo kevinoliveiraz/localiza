@@ -6,7 +6,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 const base = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const names = [
  ['mapa','paginas/mapa.html'],['ambientes','paginas/ambientes.html'],
- ['mapeamento','paginas/mapeamento.html'],['relatorios','paginas/relatorios.html'],['editor','paginas/editor.html']
+ ['relatorios','paginas/relatorios.html'],['editor','paginas/editor.html']
 ];
 globalThis.localStorage = {getItem(){return null},setItem(){}};
 let validations=0;

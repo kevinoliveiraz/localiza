@@ -8,6 +8,8 @@ O início recebeu uma composição com o vídeo fornecido pelo responsável, bus
 
 Execute `npm run dev` e abra http://localhost:5173/. A entrada abre diretamente na busca, sem e-mail ou senha. O front também funciona com um servidor estático, como Live Server.
 
+Teste online: [abrir o Localiza](https://kevinoliveiraz.github.io/localiza/) ou [criar um percurso](https://kevinoliveiraz.github.io/localiza/#criar-mapa). O GitHub Pages publica a raiz de `main` como site estático em HTTPS; `.nojekyll` mantém os arquivos originais. Não há backend hospedado. Os percursos continuam salvos apenas no navegador de cada aparelho.
+
 ## Testar o fluxo
 
 1. Pesquise uma palavra, um nome de página ou o conteúdo de uma célula. “Ver todas as informações” abre a consulta completa da simulação.
@@ -26,15 +28,20 @@ A empresa fictícia Horizonte tem listas de ramais, setores, contatos e e-mails,
 
 Experimente buscar `2301`, `Financeiro`, `bruno.lima@horizonte.example`, `impressora` ou `sala de reunião`. Os e-mails usam o domínio reservado `.example`; os nomes, ramais e locais são inventados. Os exemplos são acrescentados às prévias já salvas sem substituir páginas editadas, rascunhos, pessoas ou o perfil selecionado.
 
-## Mapa e 3D
+## Mapas de percurso
 
-As ferramentas anteriores continuam em **Administração → Mapa e ferramentas 3D**. Seus arquivos e o motor local foram preservados. Os módulos de contas da etapa anterior também continuam no código, sem participar do fluxo padrão da prévia. Não foram alteradas as bases privadas existentes.
+Em **Mapas → Criar percurso**, informe a saída A e o destino B. **Com o celular** usa movimento e direção para estimar a caminhada em corredores internos; **Desenhar** permite marcar os pontos manualmente para criar/testar o caminho no computador. O resultado é uma rota simples em 2D vista de cima, sem objetos. É possível pausar, concluir, salvar, consultar e excluir os percursos locais.
+
+**A captura por sensores é experimental e ainda precisa ser validada numa caminhada real.** Requer celular compatível, HTTPS e permissão de movimento. Não é GPS indoor nem planta medida. A distância e a largura do corredor são referências estimadas/ilustrativas. O servidor local em `localhost` não fornece acesso HTTPS ao celular. Os percursos ficam no navegador, em `localiza_route_maps_v1`, sem envio de dados. Consulte `docs/13-MAPAS-DE-PERCURSO.md`.
+
+O mapa de ambientes e o editor 3D anteriores continuam em **Administração → Ferramentas de ambientes anteriores**. Seus arquivos e o motor local foram preservados. Os módulos de contas da etapa anterior também continuam no código, sem participar do fluxo padrão da prévia. Não foram alteradas as bases privadas existentes.
 
 Para os detalhes do 3D e as limitações anteriores da análise de vídeo, consulte `docs/08-VIDEO-E-MODELO-SIMPLIFICADO.md`.
 
 ## Verificar
 
 - `npm run check:front`: testes do novo fluxo visual, busca em tabelas/texto, simulação de perfis, edição livre e persistência da prévia.
+- `npm run check:routes`: geometria, estimativa de passos/direção, armazenamento e ciclo de permissões/sensores com dados de teste.
 - `npm run check`: inclui os testes do front e mantém as verificações anteriores de HTML, estado, 3D, vídeo e do módulo de contas preservado.
 
-Direção atual e validação: `docs/11-FRONT-CONSULTA-E-PAGINAS.md`.
+Direção atual: `docs/11-FRONT-CONSULTA-E-PAGINAS.md`, `docs/12-INICIO-COM-VIDEO.md` e `docs/13-MAPAS-DE-PERCURSO.md`.

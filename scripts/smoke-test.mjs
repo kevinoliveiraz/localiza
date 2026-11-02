@@ -7,7 +7,7 @@ let count=0;
 for(const rel of htmls){
  const html=await readFile(path.join(base,rel),'utf8');
  if(!html.includes('data-page=')||!(/assets\/js\/(?:main|front\/app)\.js/.test(html)))throw new Error(`Página inválida: ${rel}`);
- const spatial=['mapa','ambientes','mapeamento','editor','relatorios'].some(name=>rel===`paginas/${name}.html`);
+ const spatial=['mapa','ambientes','editor','relatorios'].some(name=>rel===`paginas/${name}.html`);
  if(!spatial&&!html.includes('assets/js/front/app.js'))throw new Error(`Prévia do front não conectada: ${rel}`);
  count++;
 }

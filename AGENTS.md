@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Prioridade vigente — 02/11/2026: percursos simples A → B
+
+O responsável pediu que a criação de mapas passe a registrar uma caminhada em corredores internos e gere apenas um percurso em 2D visto de cima. A entrada principal é **Mapas → Criar percurso** (`assets/js/routes/`), com captura experimental por passos/direção do celular e desenho manual identificado para teste. Leia `docs/13-MAPAS-DE-PERCURSO.md`. Não apresentar a estimativa como GPS indoor preciso, planta medida ou captura física já validada. Não adicionar objetos/câmera/3D a esse fluxo. O editor 3D anterior continua como ferramenta secundária. Esta solicitação substitui as instruções antigas de manter a criação de mapas intocada. A etapa permanece somente frontend, com percursos locais e sem backend. Preservar busca, informações, perfis, tema e a página inicial com vídeo sem moldura.
+
 ## Distribuição no GitHub
 
 O repositório inclui o código atual, os dados fictícios e as mídias usadas pelo frontend. As pastas de dados privados, ferramentas instaladas, dependências, validação e configurações locais ficam fora do Git. Referências visuais e recortes históricos, que não são usados pelo código atual, também ficam apenas no computador e estão listados em `.gitignore`. Não restaurar essas imagens antigas na interface nem adicioná-las à distribuição pública. A direção visual vigente está em `docs/12-INICIO-COM-VIDEO.md`.
