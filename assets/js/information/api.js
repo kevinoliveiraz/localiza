@@ -1,0 +1,5 @@
+export async function request(route,{method='GET',body,signal}={}){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000),abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});
+ try{const response=await fetch('/api/localiza'+route,{method,credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:{Accept:'application/json',...(method!=='GET'?{'Content-Type':'application/json','X-Localiza-Client':'localiza-information-v1'}:{})},body:body===undefined?undefined:JSON.stringify(body)});let value;try{value=await response.json();}catch{throw new Error('Abra o projeto pelo servidor local usando npm run dev.');}if(!response.ok)throw Object.assign(new Error(value.error||'Não foi possível concluir a ação.'),{status:response.status});return value;}
+ catch(error){if(error.name==='AbortError'&&!signal?.aborted)throw new Error('O servidor demorou a responder. Tente novamente.');throw error;}finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
+}

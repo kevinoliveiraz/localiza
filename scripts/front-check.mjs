@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import * as store from '../assets/js/front/store.js';
+import * as view from '../assets/js/front/views.js';
+import {appendDemoContent,demoContent} from '../assets/js/front/demo-content.js';
+let count=0;const check=(a,b)=>{assert.deepEqual(a,b);count++;};
+globalThis.document={body:{dataset:{root:'../'}}};globalThis.localStorage={getItem:()=>null,setItem(){}};
+const fixtures=store.initialData(),titles=items=>items.map(p=>p.title).sort();
+// Keep the general editing checks independent of the changing example collection.
+const data=structuredClone(fixtures);data.pages=data.pages.filter(page=>!page.id.startsWith('demo-'));
+check(store.searchPages(data,'').length,4);check(store.searchPages(data,'todos').length,4);
+check(titles(store.searchPages(data,'materiais')),['Recursos úteis']);
+check(store.matchingRows(data.pages[1],'materiais').length,1);
+check(store.matchingRows(data.pages[1],'Recursos úteis').length,2);
+check(titles(store.searchPages(data,'organizacao')),['Guia da equipe','Primeiros passos']);
+data.viewer='auxiliar';check(titles(store.visiblePages(data)),['Guia da equipe','Recursos úteis']);check(store.searchPages(data,'prioridades').length,0);
+data.viewer='supervisor';check(titles(store.visiblePages(data)),['Acompanhamento','Guia da equipe','Recursos úteis']);
+data.viewer='aprendiz';check(titles(store.visiblePages(data)),['Guia da equipe','Primeiros passos']);check(store.searchPages(data,'materiais').length,0);
+data.viewer='admin';const input={title:'Página totalmente livre',body:'',link:'',audience:'profiles',profileIds:['auxiliar'],status:'published',table:{columns:['Minha coluna','Outra coluna','Campo livre'],rows:[['Uma informação','Um valor','Texto'],['','','']]}};
+const page=store.savePage(data,input);check(page.table.rows.length,1);check(page.table.columns.length,3);
+check(titles(store.searchPages(data,'Um valor')),['Página totalmente livre']);
+assert.throws(()=>store.savePage(data,{...input,title:''}));count++;
+assert.throws(()=>store.savePage(data,{...input,body:'',table:null}));count++;
+assert.throws(()=>store.savePage(data,{...input,profileIds:[]}));count++;
+assert.throws(()=>store.savePage(data,{...input,link:'javascript:alert(1)'}));count++;
+assert.throws(()=>store.savePage(data,{...input,table:{columns:['Mesmo','mesmo'],rows:[['a','b']]}}));count++;
+const profile=store.saveProfile(data,{name:'Novo público',description:'Livre'});check(profile.name,'Novo público');
+const person=store.savePerson(data,{name:'Pessoa de exemplo',email:'pessoa@example.test',profileIds:[profile.id],admin:false});check(person.profileIds,[profile.id]);
+let saved='';store.persistPreview(data,{setItem:(key,value)=>{check(key,store.STORAGE_KEY);saved=value;}});check(store.readPreview({getItem:()=>saved}).pages.length,5);
+check(store.readPreview({getItem:()=>'{invalid'}).pages.length,fixtures.pages.length);
+assert.throws(()=>store.persistPreview(data,{setItem(){throw Error('quota');}}));count++;
+const hostile=store.savePage(data,{...input,title:'<img src=x onerror=alert(1)>',table:{columns:['<script>'],rows:[['<img onerror="x">']]}});
+const state={data,route:'buscar',query:'',searched:false,filterIds:null,record:hostile,draft:hostile,archived:false,person:null,profile:null};
+for(const name of ['home','results','detail','admin','manage','editor','people','personForm','profiles','profileForm']){
+ const html=view.frame(state,view[name](state));assert(html.includes('<header')&&html.includes('</main>'));assert(!html.includes('<img src=x')&&!html.includes('<script>'));count++;
+}
+const home=view.home(state);check(home.includes('type="password"'),false);check(home.includes('data-front-form="search"'),true);
+data.viewer='aprendiz';check(view.frame(state,view.home(state)).includes('>Administração</a>'),false);
+check(view.frame(state,view.home(state)).includes('não é controle de acesso real'),true);
+const code=await readFile(new URL('../assets/js/front/app.js',import.meta.url),'utf8');check(code.includes('fetch('),false);check(code.includes('./api.js'),false);
+// The additions must reach browsers that already have a saved, edited preview.
+const existing={version:1,viewer:'aprendiz',profiles:structuredClone(data.profiles),people:[{id:'custom-person',name:'Pessoa preservada',email:'custom@example.test',profileIds:['aprendiz'],admin:false}],pages:[{...structuredClone(data.pages[0]),title:'Meu título editado',status:'draft'}]};
+let migrated='';const loaded=store.readPreview({getItem:()=>JSON.stringify(existing),setItem:(key,value)=>{check(key,store.STORAGE_KEY);migrated=value;}});
+check(loaded.viewer,'aprendiz');check(loaded.pages.find(page=>page.id===existing.pages[0].id).title,'Meu título editado');check(loaded.pages.find(page=>page.id===existing.pages[0].id).status,'draft');
+check(loaded.people.find(person=>person.id==='custom-person').name,'Pessoa preservada');check(loaded.pages.filter(page=>page.id.startsWith('demo-')).length,9);check(JSON.parse(migrated).demoContentVersion,1);
+check(appendDemoContent(loaded).pages.length,loaded.pages.length);check(new Set(loaded.pages.map(page=>page.id)).size,loaded.pages.length);
+const samples=demoContent();check(samples.pages.reduce((total,page)=>total+page.table.rows.length,0),71);check(samples.people.length,12);check(samples.people.every(person=>person.email.endsWith('@horizonte.example')),true);
+check(store.searchPages(fixtures,'bruno.lima@horizonte.example').some(page=>page.id==='demo-contatos'),true);
+check(store.matchingRows(fixtures.pages.find(page=>page.id==='demo-ramais'),'2301').map(row=>row[2]),['Bruno Lima']);
+check(store.searchPages(fixtures,'RH').some(page=>page.id==='demo-ramais'),true);
+fixtures.viewer='auxiliar';check(store.searchPages(fixtures,'Aprovações e responsáveis').length,0);check(store.searchPages(fixtures,'Rotinas de apoio').length,1);
+fixtures.viewer='supervisor';check(store.searchPages(fixtures,'Aprovações e responsáveis').length,1);check(store.searchPages(fixtures,'Rotinas de apoio').length,0);
+fixtures.viewer='aprendiz';check(store.searchPages(fixtures,'Integração de aprendizes').length,1);
+console.log(`OK — ${count} verificações do front: pesquisa em tabelas/texto, filtros visuais, edição livre, persistência da prévia e escape de conteúdo.`);

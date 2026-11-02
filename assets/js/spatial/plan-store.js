@@ -1,0 +1,11 @@
+import {clone,createExamplePlan,validatePlan} from './plan-model.js';
+const KEY='localiza_spatial_v1';
+export const floorKey=(building,floor)=>encodeURIComponent(building)+'::'+encodeURIComponent(floor);
+function readAll(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch{return {}}}
+export function loadPlan(building,floor,rooms=[]){const stored=readAll()[floorKey(building,floor)];if(stored){try{return validatePlan(stored)}catch{}}return createExamplePlan(building,floor,rooms);}
+export function hasSavedPlan(building,floor){return Boolean(readAll()[floorKey(building,floor)]);}
+export function savePlan(plan){const next=validatePlan(plan);next.example=false;next.source=plan.videoSource?'video':'manual';next.updatedAt=new Date().toISOString();const association=photoAssociation(plan.building,plan.floor);if(association){const photos=JSON.parse(localStorage.getItem(KEY+'_photos')||'{}');photos[floorKey(plan.building,plan.floor)]={...association,preferred:false};localStorage.setItem(KEY+'_photos',JSON.stringify(photos));}const all=readAll();all[floorKey(plan.building,plan.floor)]=next;localStorage.setItem(KEY,JSON.stringify(all));globalThis.dispatchEvent?.(new CustomEvent('localiza:plan-saved',{detail:{building:plan.building,floor:plan.floor}}));return clone(next);}
+export function loadDraft(building,floor){try{const drafts=JSON.parse(localStorage.getItem(KEY+'_drafts')||'{}');const draft=drafts[floorKey(building,floor)]||JSON.parse(localStorage.getItem(KEY+'_draft'));return draft?.building===building&&draft?.floor===floor?validatePlan(draft):null}catch{return null}}
+export function saveDraft(plan){try{const drafts=JSON.parse(localStorage.getItem(KEY+'_drafts')||'{}');drafts[floorKey(plan.building,plan.floor)]=plan;localStorage.setItem(KEY+'_drafts',JSON.stringify(drafts));return true}catch{return false}}
+export function photoAssociation(building,floor){try{return JSON.parse(localStorage.getItem(KEY+'_photos')||'{}')[floorKey(building,floor)]||null}catch{return null}}
+export function associatePhotoModel(building,floor,job){const all=JSON.parse(localStorage.getItem(KEY+'_photos')||'{}');all[floorKey(building,floor)]={preferred:true,id:job.id,modelUrl:job.modelUrl,format:job.format,stage:job.stage,at:new Date().toISOString()};localStorage.setItem(KEY+'_photos',JSON.stringify(all));}

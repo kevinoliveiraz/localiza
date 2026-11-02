@@ -1,0 +1,26 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+coverage/
+dist/
+*.log
+
+.tools/
+.localiza-data/
+validation/
+__pycache__/
+
+assets/qa/
+
+.vscode/
+
+# Referências e recortes históricos não fazem parte da distribuição pública.
+referencias/
+assets/img/dashboard-map.webp
+assets/img/hero-map.webp
+assets/img/map-building.webp
+assets/img/onboarding-visual.webp
+assets/img/scanner-visual.webp
+assets/img/studio-points.webp

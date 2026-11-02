@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import {readdir,readFile,writeFile,mkdir,access} from 'node:fs/promises';
+import {emptyPlan,addRectRoom,addOpening,wallSegments,validatePlan,polygonArea,moveVertex,clone,snap} from '../assets/js/spatial/plan-model.js';
+import {buildPlanGroup} from '../assets/js/spatial/engine.js';
+for(const file of await readdir(new URL('../assets/js/spatial/',import.meta.url)))if(file.endsWith('.js'))await import('../assets/js/spatial/'+file);
+const plan=emptyPlan();const room=addRectRoom(plan,{x:0,y:0,width:5,depth:4,name:'Criação'});
+assert.equal(polygonArea(room.points),20);assert.equal(plan.walls.length,4);
+const wall=plan.walls[0];addOpening(plan,wall.id,'door',1.5);addOpening(plan,wall.id,'window',3.5);
+const volume=wallSegments(wall).reduce((sum,s)=>sum+(s.end-s.start)*(s.top-s.bottom)*wall.thickness,0);
+assert.ok(Math.abs(volume-(5*2.8-.9*2.1-1.2*1.1)*.16)<1e-9,'A porta e a janela removem volume real da parede');
+assert.throws(()=>addOpening(plan,wall.id,'door',1.6));
+const model=buildPlanGroup(validatePlan(plan));let meshes=0,vertices=0;model.traverse(node=>{if(node.isMesh){meshes++;vertices+=node.geometry.attributes.position.count;}});assert.ok(meshes>8&&vertices>100);
+addRectRoom(plan,{x:5,y:0,width:3,depth:4,name:'Conexão'});assert.equal(plan.walls.length,7,'A parede compartilhada não é duplicada');
+moveVertex(plan,{x:5,y:4},{x:6,y:4});assert.ok(plan.rooms.every(r=>r.points.some(p=>p.x===6&&p.y===4)));
+assert.equal(snap(1.13),1.25);assert.deepEqual(validatePlan(JSON.parse(JSON.stringify(plan))),plan);
+const broken=clone(plan);broken.walls[0].a.x=Infinity;assert.throws(()=>validatePlan(broken));
+const overlap=clone(plan);overlap.walls[0].openings[1].offset=1.5;assert.throws(()=>validatePlan(overlap));
+const crossing=emptyPlan();addRectRoom(crossing,{x:0,y:0,width:5,depth:4});crossing.rooms[0].points=[{x:0,y:0},{x:5,y:0},{x:0,y:4},{x:5,y:3}];assert.throws(()=>validatePlan(crossing));
+const values=new Map();globalThis.localStorage={getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};
+const store=await import('../assets/js/spatial/plan-store.js');store.associatePhotoModel('central','Térreo',{id:'job',modelUrl:'http://127.0.0.1:5175/api/scans/job/model',format:'glb',stage:'completed'});assert.equal(store.photoAssociation('central','Térreo').preferred,true);
+store.savePlan(plan);assert.equal(store.loadPlan('central','Térreo').example,false);assert.equal(store.photoAssociation('central','Térreo').preferred,false);
+const packageData=JSON.parse(await readFile(new URL('../package.json',import.meta.url)));assert.equal(packageData.dependencies.three,'0.186.1');
+for(const file of await readdir(new URL('../assets/vendor/three/',import.meta.url),{recursive:true}))if(file.endsWith('.js')){const url=new URL('../assets/vendor/three/'+file.replaceAll('\\','/'),import.meta.url),source=await readFile(url,'utf8');for(const match of source.matchAll(/from\s+['"](\.[^'"]+)['"]/g))await access(new URL(match[1],url));}
+globalThis.FileReader=class{readAsArrayBuffer(blob){blob.arrayBuffer().then(result=>{this.result=result;this.onloadend?.();});}readAsDataURL(blob){blob.arrayBuffer().then(result=>{this.result='data:'+blob.type+';base64,'+Buffer.from(result).toString('base64');this.onloadend?.();});}};
+const {GLTFExporter}=await import('../assets/vendor/three/addons/exporters/GLTFExporter.js');
+const glb=Buffer.from(await new GLTFExporter().parseAsync(model,{binary:true}));assert.equal(glb.toString('ascii',0,4),'glTF');const json=JSON.parse(glb.toString('utf8',20,20+glb.readUInt32LE(12)));assert.ok(json.meshes.length>8);await mkdir(new URL('../validation/',import.meta.url),{recursive:true});await writeFile(new URL('../validation/desenho-exportado.glb',import.meta.url),glb);
+console.log(`OK — geometria em metros, aberturas, ${meshes} malhas 3D, paredes compartilhadas, validação e persistência.`);

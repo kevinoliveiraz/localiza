@@ -1,0 +1,12 @@
+LOCALIZA — PRÉVIA DO FRONTEND
+
+1. Abra esta pasta no VS Code ou em um terminal.
+2. Na primeira vez, execute: npm install
+3. Execute: npm run dev
+4. Abra: http://localhost:5173/
+
+A tela inicial abre sem e-mail ou senha. Pesquise ramais, pessoas, setores e informações úteis.
+Use Administração para editar as páginas da prévia e o seletor de perfis para simular diferentes públicos.
+Todos os dados de exemplo são fictícios. A simulação visual não cria contas ou permissões reais.
+
+As ferramentas anteriores de mapa e 3D continuam em Administração. Leia README.md para instruções e limites.
