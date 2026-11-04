@@ -81,6 +81,8 @@
 @media(max-width:700px){.route-nav-map-tools{padding:7px 17px;gap:10px}.route-nav-map-tools>span{font-size:9px}.route-nav-map-tools .route-small-button{font-size:9px}.route-nav-align{margin:14px 0;padding:13px}.route-navigation[data-method=motion] .route-nav-controls .route-actions .btn-secondary{min-height:44px}.route-navigation[data-following=true] .route-nav-map>svg{min-height:255px;max-height:325px}}
 
 /* Find a route, then open its map. Editing and sensor options stay secondary. */
+.route-endpoint-details{width:100%;margin:16px 0 4px;font-size:11px;color:var(--muted)}.route-endpoint-details>summary{cursor:pointer;min-height:42px;align-content:center}.route-endpoint-details>summary>span{font-size:10px;color:var(--subtle);margin-left:5px}.route-endpoint-details>label{display:block;margin:16px 0 0!important}.route-endpoint-details>label:last-child{margin-bottom:8px!important}
+@media(max-width:700px){.route-controls form>.route-title-field{flex-basis:100%;width:100%}.route-workspace:not([data-phase=idle]) .route-endpoint-details{display:none}.route-workspace:not([data-phase=idle])[data-details-open=true] .route-endpoint-details{display:block}.route-endpoint-details{margin:9px 0 0}}
 .front-results-layout.has-no-filters{grid-template-columns:minmax(0,1fr)}
 .route-list-search{margin:-5px 0 25px;max-width:650px}.route-list-note{margin:24px 0 0}
 .route-result{display:flex;align-items:center;gap:17px;padding:23px;border-radius:14px;margin-bottom:16px;min-width:0}

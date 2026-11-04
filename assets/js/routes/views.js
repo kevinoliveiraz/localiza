@@ -1,5 +1,5 @@
 import {I,esc} from '../ui.js';
-import {fitPath,toCanvas,CUES,pointName} from './model.js?v=20261104-search';
+import {fitPath,toCanvas,CUES,pointName} from './model.js?v=20261104-name';
 export const metres=value=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(value)+' m';
 export function cueIcon(cue,size=18){
  const paths={left:'M19 19v-7a4 4 0 0 0-4-4H5m5-5L5 8l5 5',right:'M5 19v-7a4 4 0 0 1 4-4h10m-5-5 5 5-5 5','stairs-up':'M3 20h5v-5h5v-5h5V5h4M4 9V3h6M4 3l7 7','stairs-down':'M3 20h5v-5h5v-5h5V5h4M4 3v6h6M4 9l7-7'};
@@ -27,11 +27,10 @@ export function workspace(route=null){
  <section class="route-workspace surface" data-route-workspace>
  <div class="route-controls">
   <div class="route-mode" role="group" aria-label="Como criar o percurso"><button type="button" data-route-mode="motion" aria-pressed="true">${I('compass',16)} Com o celular</button><button type="button" data-route-mode="manual" aria-pressed="false">${I('edit',16)} Desenhar</button></div>
-  <div class="route-active-summary" data-route-active-summary hidden><p data-route-mobile-summary></p><button type="button" class="route-small-button" data-route-action="details" aria-expanded="false">${I('edit',15)} Editar nomes</button></div>
+  <div class="route-active-summary" data-route-active-summary hidden><p data-route-mobile-summary></p><button type="button" class="route-small-button" data-route-action="details" aria-expanded="false">${I('edit',15)} Editar nome</button></div>
   <form id="route-create-form" data-route-form>
-   <label class="route-name-field">Nome da rota <span class="front-optional">opcional</span><input name="title" maxlength="90" placeholder="Ex.: Caminho para a sala de reuniões" autocomplete="off"/></label>
-   <label class="route-name-field"><span class="route-point-label"><b>A</b> De onde você sai?</span><input name="start" maxlength="90" placeholder="Ex.: Entrada principal" required autocomplete="off"/></label>
-   <label class="route-name-field"><span class="route-point-label"><b>B</b> Aonde quer chegar?</span><input name="end" maxlength="90" placeholder="Ex.: Sala de reuniões" required autocomplete="off"/></label>
+   <label class="route-name-field route-title-field">Nome da rota<input name="title" maxlength="90" required placeholder="Ex.: Caminho para a sala de reuniões" autocomplete="off"/></label>
+   <details class="route-endpoint-details"><summary>Mais detalhes <span>opcional</span></summary><label><span class="route-point-label"><b>A</b> Saída</span><input name="start" maxlength="90" placeholder="Ex.: Entrada principal" autocomplete="off"/></label><label><span class="route-point-label"><b>B</b> Destino</span><input name="end" maxlength="90" placeholder="Ex.: Sala de reuniões" autocomplete="off"/></label></details>
    <div class="route-method-copy" data-route-help></div>
    <details class="route-calibration" data-route-calibration><summary>Ajustar tamanho do passo</summary><label>Comprimento médio do passo (m)<input name="stepLength" type="number" min="0.3" max="1.2" step="0.01" value="0.70" inputmode="decimal"/></label><p>Altera a escala estimada. Padrão: 70 cm.</p></details>
    <p class="route-error" data-route-error role="alert" hidden></p><div class="route-actions" data-route-actions></div>

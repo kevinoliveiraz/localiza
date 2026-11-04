@@ -1,8 +1,8 @@
-import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261104-search';
-import {startMotionCapture} from './capture.js?v=20261104-search';
-import {saveRoute,updateRoute} from './store.js?v=20261104-search';
-import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261104-search';
-import {pathMarkup,metres} from './views.js?v=20261104-search';
+import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261104-name';
+import {startMotionCapture} from './capture.js?v=20261104-name';
+import {saveRoute,updateRoute} from './store.js?v=20261104-name';
+import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261104-name';
+import {pathMarkup,metres} from './views.js?v=20261104-name';
 import {I} from '../ui.js';
 
 export function mountRecorder(root,{navigate,capture=startMotionCapture,record=null}={}){
@@ -41,7 +41,7 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
   find('[data-route-actions]').innerHTML=html;
   find('[data-route-mobile-actions]').innerHTML=html.replaceAll('type="submit"','type="submit" form="route-create-form"');
   root.dataset.phase=phase;root.dataset.editable=String(editable());root.dataset.recording=String(phase==='recording');
-  find('[data-route-active-summary]').hidden=phase==='idle';find('[data-route-mobile-summary]').textContent=`A · ${form.elements.start.value||'Saída'} → B · ${form.elements.end.value||'Destino'}`;
+  find('[data-route-active-summary]').hidden=phase==='idle';find('[data-route-mobile-summary]').textContent=form.elements.title.value.trim()||'Sua rota';
   root.querySelectorAll('[data-route-mode]').forEach(button=>{button.disabled=phase!=='idle';button.setAttribute('aria-pressed',String(button.dataset.routeMode===method));});
   form.elements.stepLength.disabled=method==='manual'||phase!=='idle';
   find('[data-route-calibration]').hidden=method==='manual';
@@ -78,9 +78,10 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
   }catch(cause){if(disposed||token!==generation)return;phase=points.length?'paused':'idle';status('Captura não iniciada');error(cause.message||'Não foi possível acessar os sensores.');refresh();persist();}
  }
  function showCanvas(){if(window.matchMedia('(max-width: 700px)').matches)root.scrollIntoView({block:'start'});}
- function revealNames(){root.dataset.detailsOpen='true';root.querySelectorAll('[data-route-action="details"]').forEach(button=>button.setAttribute('aria-expanded','true'));form.elements.start.scrollIntoView({block:'center'});form.elements.start.focus({preventScroll:true});}
+ function revealNames(){root.dataset.detailsOpen='true';root.querySelectorAll('[data-route-action="details"]').forEach(button=>button.setAttribute('aria-expanded','true'));form.elements.title.scrollIntoView({block:'center'});form.elements.title.focus({preventScroll:true});}
+ function invalid(event){if(event.target===form.elements.title){revealNames();error('Dê um nome à rota para continuar.');}}
  async function submit(event){
-  event.preventDefault();if(!form.checkValidity()||!form.elements.start.value.trim()||!form.elements.end.value.trim()){revealNames();form.reportValidity();error('Informe os nomes da saída e do destino.');return;}
+  event.preventDefault();if(!form.checkValidity()||!form.elements.title.value.trim()){revealNames();form.reportValidity();error('Dê um nome à rota para continuar.');return;}
   if(phase==='review'){
    try{const input={points,method,title:form.elements.title.value,start:form.elements.start.value,end:form.elements.end.value,adjusted},route=record?updateRoute(record.id,input,baseStamp):saveRoute(input);saved=true;clearTimeout(draftTimer);clearDraft(draftId);navigate('percurso/'+route.id);}catch(cause){error(cause.message);}return;
   }
@@ -142,7 +143,7 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
   }
   const action=event.target.closest('[data-route-action]')?.dataset.routeAction;
   if(action==='fit'){if(editable())fit();draw();status('Percurso enquadrado.');}
-  if(action==='details'){const open=root.dataset.detailsOpen!=='true';root.dataset.detailsOpen=String(open);root.querySelectorAll('[data-route-action="details"]').forEach(button=>button.setAttribute('aria-expanded',String(open)));if(open)form.elements.start.focus({preventScroll:true});}
+  if(action==='details'){const open=root.dataset.detailsOpen!=='true';root.dataset.detailsOpen=String(open);root.querySelectorAll('[data-route-action="details"]').forEach(button=>button.setAttribute('aria-expanded',String(open)));if(open)form.elements.title.focus({preventScroll:true});}
   if(action==='reset'){stop();history.push(snapshot());points=[];selected=-1;tracker=null;phase='editing';fit();error('');refresh();persist();status('Toque no quadro para marcar o novo A. Desfazer recupera o desenho anterior.');}
   if(action==='cancel-capture'){stop();phase=points.length?'paused':'idle';refresh();persist();}
   if(action==='pause')pause();
@@ -157,16 +158,16 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
    stop();if(method==='motion'&&phase!=='editing'){points=simplifyPoints(points);selected=points.length-1;}phase='review';svg.querySelector('[data-route-cursor]')?.remove();status('Confira o percurso. Você pode voltar à edição a qualquer momento.');refresh();persist();showCanvas();
   }
  }
- function input(event){if(event.target.matches('[data-route-cue]')&&editable()&&points[selected]){if(event.type!=='change')return;change(()=>{const cue=event.target.value;if(Object.hasOwn(CUES,cue))points[selected].cue=cue;else delete points[selected].cue;});status('Marcação atualizada neste ponto.');}else if(form.contains(event.target)){find('[data-route-mobile-summary]').textContent=`A · ${form.elements.start.value||'Saída'} → B · ${form.elements.end.value||'Destino'}`;scheduleDraft();}}
+ function input(event){if(event.target.matches('[data-route-cue]')&&editable()&&points[selected]){if(event.type!=='change')return;change(()=>{const cue=event.target.value;if(Object.hasOwn(CUES,cue))points[selected].cue=cue;else delete points[selected].cue;});status('Marcação atualizada neste ponto.');}else if(form.contains(event.target)){find('[data-route-mobile-summary]').textContent=form.elements.title.value.trim()||'Sua rota';scheduleDraft();}}
  const visibility=()=>{if(document.hidden){cancelGesture();pause('Pausado com a tela oculta. Retome a partir do mesmo ponto.');persist();}};
  const pagehide=()=>{cancelGesture();pause();persist();};
  const resized=()=>{if(gesture)cancelGesture();draw();};
  const pointerCancel=event=>{if(gesture?.id===event.pointerId)cancelGesture();};
- root.addEventListener('click',click);root.addEventListener('input',input);root.addEventListener('change',input);form.addEventListener('submit',submit);
+ root.addEventListener('click',click);root.addEventListener('input',input);root.addEventListener('change',input);form.addEventListener('submit',submit);form.addEventListener('invalid',invalid,true);
  svg.addEventListener('pointerdown',pointerDown);svg.addEventListener('pointermove',pointerMove);svg.addEventListener('pointerup',pointerUp);svg.addEventListener('pointercancel',pointerCancel);svg.addEventListener('lostpointercapture',pointerCancel);svg.addEventListener('keydown',keyboard);
  document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',pagehide);window.addEventListener('resize',resized);
  if(draft)status('Rascunho recuperado. Continue a edição de onde parou.');else if(record)status('Arraste A, B ou as curvas. Suas alterações só entram ao salvar.');
  if(phase==='editing'&&method==='motion'){points=simplifyPoints(points);selected=points.length-1;fit();}
  refresh();
- return ()=>{if(disposed)return;cancelGesture();stop();persist();disposed=true;clearTimeout(draftTimer);root.removeEventListener('click',click);root.removeEventListener('input',input);root.removeEventListener('change',input);form.removeEventListener('submit',submit);svg.removeEventListener('pointerdown',pointerDown);svg.removeEventListener('pointermove',pointerMove);svg.removeEventListener('pointerup',pointerUp);svg.removeEventListener('pointercancel',pointerCancel);svg.removeEventListener('lostpointercapture',pointerCancel);svg.removeEventListener('keydown',keyboard);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pagehide);window.removeEventListener('resize',resized);};
+ return ()=>{if(disposed)return;cancelGesture();stop();persist();disposed=true;clearTimeout(draftTimer);root.removeEventListener('click',click);root.removeEventListener('input',input);root.removeEventListener('change',input);form.removeEventListener('submit',submit);form.removeEventListener('invalid',invalid,true);svg.removeEventListener('pointerdown',pointerDown);svg.removeEventListener('pointermove',pointerMove);svg.removeEventListener('pointerup',pointerUp);svg.removeEventListener('pointercancel',pointerCancel);svg.removeEventListener('lostpointercapture',pointerCancel);svg.removeEventListener('keydown',keyboard);document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',pagehide);window.removeEventListener('resize',resized);};
 }

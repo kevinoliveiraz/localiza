@@ -1,7 +1,7 @@
 import {I,esc} from '../ui.js';
-import {metres,cueIcon,pathMarkup} from './views.js?v=20261104-search';
-import {instruction} from './guidance.js?v=20261104-search';
-import {toCanvas} from './model.js?v=20261104-search';
+import {metres,cueIcon,pathMarkup} from './views.js?v=20261104-name';
+import {instruction} from './guidance.js?v=20261104-name';
+import {toCanvas} from './model.js?v=20261104-name';
 const arrow=()=>'<svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V3m-7 7 7-7 7 7"/></svg>';
 export function navigationPage(route,{backTo='mapas'}={}){
  const target=backTo==='mapas'||backTo==='buscar'||backTo?.startsWith('buscar?')?backTo:'mapas';
