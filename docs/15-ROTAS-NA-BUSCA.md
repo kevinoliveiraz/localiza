@@ -15,7 +15,7 @@ Não há migração de chave, exclusão de dados, backend, envio de coordenadas 
 
 As verificações do front incluem pesquisa por nome e pontos A/B, acentos, múltiplas palavras, resultado somente de rota, combinação com páginas e seus filtros, perfis simulados, escape de conteúdo e retorno à busca. O harness DOM externo verifica o fluxo completo, nomes em rascunhos/edições e mesmo ID após salvar. A regressão do automático verifica que as opções recolhidas mantêm os controles e a liberação dos sensores.
 
-No navegador local foram conferidos criação manual com nome, salvar, pesquisar sem acento, abrir diretamente o mapa, voltar à mesma busca, opções alternativas e layout com viewport de 390 × 844. Isso valida a interface responsiva, não a precisão de uma caminhada física. Cache dos módulos e entradas: `20261104-name`.
+No navegador local foram conferidos criação manual com nome, salvar, pesquisar sem acento, abrir diretamente o mapa, voltar à mesma busca, opções alternativas e layout com viewport de 390 × 844. Isso valida a interface responsiva, não a precisão de uma caminhada física. Cache dos módulos e entradas: `20261104-mobile`.
 
 Na correção do nome, foi verificado no navegador que um nome vazio é recusado, enquanto preencher somente o nome permite desenhar, revisar e salvar sem saída/destino. O resumo durante a edição mostra o nome dado à rota.
 

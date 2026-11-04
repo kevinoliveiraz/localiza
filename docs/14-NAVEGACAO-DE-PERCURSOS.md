@@ -25,7 +25,7 @@ Ao pausar, chegar, sair ou ocultar a página, os sensores são desligados. Uma r
 
 **Estimativa experimental, sem validação física nesta entrega.** Acelerômetro e direção podem acumular deriva, perder/contar passos extras e sofrer interferência. É necessário manter o topo apontado na direção em que se anda. A escala do desenho e o tamanho do passo afetam o resultado; um desenho sem medidas reais não se torna uma planta medida. Não existe posicionamento indoor absoluto, identificação real do corredor, recálculo de outro caminho ou reconhecimento de escadas. O aviso de afastamento compara uma estimativa com o desenho, não determina onde a pessoa está no prédio. A chegada é estimada e deve ser conferida no local.
 
-Tudo continua frontend. O percurso salvo não é alterado pela navegação; coordenadas estimadas e leituras dos sensores não são enviadas ou persistidas. Mapas e rascunhos já existentes mantêm suas chaves e formatos. O modo manual conserva o fluxo anterior. Os recursos novos usam a versão `20261104-name` para evitar cache antigo no celular.
+Tudo continua frontend. O percurso salvo não é alterado pela navegação; coordenadas estimadas e leituras dos sensores não são enviadas ou persistidas. Mapas e rascunhos já existentes mantêm suas chaves e formatos. O modo manual conserva o fluxo anterior. Os recursos novos usam a versão `20261104-mobile` para evitar cache antigo no celular.
 
 ## Validação
 

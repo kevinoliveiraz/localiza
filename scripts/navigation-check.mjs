@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import {Journey,buildGuide,inferredCue,instruction} from '../assets/js/routes/guidance.js?v=20261104-name';
-import {navigationPage,instructionMarkup,actionsMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261104-name';
-import {projection} from '../assets/js/routes/model.js?v=20261104-name';
-import {detail} from '../assets/js/routes/views.js?v=20261104-name';
+import {Journey,buildGuide,inferredCue,instruction} from '../assets/js/routes/guidance.js?v=20261104-mobile';
+import {navigationPage,instructionMarkup,actionsMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261104-mobile';
+import {projection} from '../assets/js/routes/model.js?v=20261104-mobile';
+import {detail} from '../assets/js/routes/views.js?v=20261104-mobile';
 let count=0;const equal=(a,b)=>{assert.deepEqual(a,b);count++;},ok=value=>{assert.ok(value);count++;},throws=fn=>{assert.throws(fn);count++;};
 const route={id:'teste',start:'Entrada',end:'Destino',method:'manual',points:[{x:0,y:0},{x:0,y:-4,cue:'right'},{x:4,y:-4,cue:'stairs-up'},{x:4,y:-7}]},original=JSON.stringify(route);
 const plan=buildGuide(route);equal(plan.total,11);equal(plan.legs.map(l=>l.cue),['right','stairs-up','arrival']);equal(instruction('stairs-up'),'Suba a escada');

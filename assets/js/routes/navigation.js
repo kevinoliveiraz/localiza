@@ -1,9 +1,9 @@
-import {Journey,buildGuide,instruction} from './guidance.js?v=20261104-name';
-import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261104-name';
-import {StepTracker,projection} from './model.js?v=20261104-name';
-import {startMotionCapture} from './capture.js?v=20261104-name';
-import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261104-name';
-import {metres} from './views.js?v=20261104-name';
+import {Journey,buildGuide,instruction} from './guidance.js?v=20261104-mobile';
+import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261104-mobile';
+import {StepTracker,projection} from './model.js?v=20261104-mobile';
+import {startMotionCapture} from './capture.js?v=20261104-mobile';
+import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261104-mobile';
+import {metres} from './views.js?v=20261104-mobile';
 import {esc} from '../ui.js';
 
 export function mountNavigation(root,{route,capture=startMotionCapture}={}){

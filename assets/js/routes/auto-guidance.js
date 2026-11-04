@@ -1,4 +1,4 @@
-import {angleDelta,distance} from './model.js?v=20261104-name';
+import {angleDelta,distance} from './model.js?v=20261104-mobile';
 const normal=angle=>(angle%360+360)%360;
 export const legHeading=leg=>normal(Math.atan2(leg.end.x-leg.start.x,-(leg.end.y-leg.start.y))*180/Math.PI);
 function foot(point,leg){const dx=leg.end.x-leg.start.x,dy=leg.end.y-leg.start.y,t=Math.max(0,Math.min(1,((point.x-leg.start.x)*dx+(point.y-leg.start.y)*dy)/(dx*dx+dy*dy)));return {x:leg.start.x+t*dx,y:leg.start.y+t*dy,t};}

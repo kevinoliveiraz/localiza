@@ -1,8 +1,8 @@
-import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261104-name';
-import {startMotionCapture} from './capture.js?v=20261104-name';
-import {saveRoute,updateRoute} from './store.js?v=20261104-name';
-import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261104-name';
-import {pathMarkup,metres} from './views.js?v=20261104-name';
+import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261104-mobile';
+import {startMotionCapture} from './capture.js?v=20261104-mobile';
+import {saveRoute,updateRoute} from './store.js?v=20261104-mobile';
+import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261104-mobile';
+import {pathMarkup,metres} from './views.js?v=20261104-mobile';
 import {I} from '../ui.js';
 
 export function mountRecorder(root,{navigate,capture=startMotionCapture,record=null}={}){
@@ -33,7 +33,7 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
  }
  function actions(){
   let html;
-  if(phase==='idle')html=`<button type="submit" class="btn btn-primary">Marcar A e começar ${I('arrow',17)}</button>`;
+  if(phase==='idle')html=`<button type="submit" class="btn btn-primary">${method==='manual'?'Começar desenho':'Começar caminhada'} ${I('arrow',19)}</button>`;
   else if(phase==='arming')html='<button class="btn btn-primary" type="button" disabled>Aguardando permissão…</button><button type="button" data-route-action="cancel-capture" class="route-text-button">Cancelar</button>';
   else if(phase==='review')html=`<button type="submit" class="btn btn-primary">${I('check',17)} ${record?'Salvar alterações':'Salvar percurso'}</button><button type="button" data-route-action="edit" class="btn btn-secondary">${I('edit',17)} Voltar à edição</button>`;
   else if(phase==='editing')html=`<button type="button" data-route-action="finish" class="btn btn-primary" ${points.length<2?'disabled':''}>${I('check',17)} Revisar percurso</button><details class="route-restart"><summary>Recomeçar</summary><button type="button" data-route-action="reset" class="route-text-button">Limpar desenho e recomeçar</button></details>`;
@@ -41,6 +41,7 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
   find('[data-route-actions]').innerHTML=html;
   find('[data-route-mobile-actions]').innerHTML=html.replaceAll('type="submit"','type="submit" form="route-create-form"');
   root.dataset.phase=phase;root.dataset.editable=String(editable());root.dataset.recording=String(phase==='recording');
+  const stage=phase==='idle'||phase==='arming'?0:phase==='review'?2:1;root.querySelectorAll('.route-flow-steps li').forEach((item,index)=>{if(index===stage)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');});
   find('[data-route-active-summary]').hidden=phase==='idle';find('[data-route-mobile-summary]').textContent=form.elements.title.value.trim()||'Sua rota';
   root.querySelectorAll('[data-route-mode]').forEach(button=>{button.disabled=phase!=='idle';button.setAttribute('aria-pressed',String(button.dataset.routeMode===method));});
   form.elements.stepLength.disabled=method==='manual'||phase!=='idle';
@@ -49,7 +50,7 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
   find('[data-route-action="undo"]').disabled=!history.past.length;find('[data-route-action="redo"]').disabled=!history.future.length;
   svg.setAttribute('viewBox',`0 0 800 ${editable()?640:480}`);svg.setAttribute('role',editable()?'group':'img');svg.setAttribute('tabindex',editable()?'0':'-1');
   svg.setAttribute('aria-label',editable()?'Editor do percurso. Arraste os pontos para ajustar.':'Percurso em duas dimensões, visto de cima');
-  find('[data-route-help]').innerHTML=method==='manual'?'<strong>Crie e ajuste com o dedo.</strong><p>Toque no quadro para marcar A e as curvas. Arraste qualquer círculo para mudar a posição. Use os botões para continuar em linha reta, à esquerda ou à direita.</p><span class="route-tag">Desenho manual · sem sensores</span>':'<strong>Registre enquanto caminha.</strong><p>Segure a tela voltada para cima e mantenha a posição do aparelho ao virar. Depois, ajuste os pontos e marque as escadas no editor.</p><span class="route-tag">Captura experimental · passos + direção</span>';
+  find('[data-route-help]').innerHTML=method==='manual'?'<strong>Desenhe com o dedo.</strong><p>Toque para marcar o caminho. Arraste os pontos para ajustar.</p>':'<strong>Caminhe para registrar.</strong><p>Mantenha o celular à frente, com a tela para cima. Você pode ajustar o traçado depois.</p><span class="route-tag">Captura experimental</span>';
   find('[data-route-limitation]').textContent=method==='manual'?'A escala do desenho é ilustrativa: o editor não mede o corredor real.':'Os sensores estimam o caminho e podem acumular desvios. Use um celular compatível, com HTTPS e permissão de movimento.';
   updateSelection();
  }

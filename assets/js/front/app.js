@@ -1,12 +1,12 @@
 import * as store from './store.js';
-import * as view from './views.js?v=20261104-name';
+import * as view from './views.js?v=20261104-mobile';
 import {read,save} from '../store.js';
-import * as routeViews from '../routes/views.js?v=20261104-name';
-import {readRoutes,removeRoute} from '../routes/store.js?v=20261104-name';
-import {mountRecorder} from '../routes/controller.js?v=20261104-name';
-import {readDraft} from '../routes/drafts.js?v=20261104-name';
-import {navigationPage} from '../routes/navigation-views.js?v=20261104-name';
-import {mountNavigation} from '../routes/navigation.js?v=20261104-name';
+import * as routeViews from '../routes/views.js?v=20261104-mobile';
+import {readRoutes,removeRoute} from '../routes/store.js?v=20261104-mobile';
+import {mountRecorder} from '../routes/controller.js?v=20261104-mobile';
+import {readDraft} from '../routes/drafts.js?v=20261104-mobile';
+import {navigationPage} from '../routes/navigation-views.js?v=20261104-mobile';
+import {mountNavigation} from '../routes/navigation.js?v=20261104-mobile';
 const app=document.getElementById('app');
 let disposeRecorder=null;
 const defaults={administracao:'administracao',membros:'pessoas',departamentos:'perfis',mapeamento:'mapas'};
@@ -17,14 +17,15 @@ const navigate=path=>{if(location.hash==='#'+path)load();else location.hash=path
 function commit(work){const next=structuredClone(state.data),result=work(next);store.persistPreview(next);state.data=next;return result;}
 function syncMotionButton(){const button=document.querySelector('[data-front-action="motion"]');if(button)button.outerHTML=view.motionButton(state.motionPaused);}
 function setupHomeVideo(){const video=document.querySelector('[data-home-video]');if(!video||state.motionPaused)return;video.muted=true;video.src=video.dataset.videoSrc;video.play().catch(()=>{if(video.isConnected){state.motionPaused=true;syncMotionButton();}});video.addEventListener('error',()=>{if(video.isConnected){state.motionPaused=true;syncMotionButton();}},{once:true});}
-function render(content){disposeRecorder?.();disposeRecorder=null;app.innerHTML=view.frame(state,content);setupHomeVideo();document.title='Localiza · '+({mapas:'Mapas de percurso','criar-mapa':'Criar percurso',percurso:'Percurso',buscar:'Buscar',administracao:'Administração',paginas:'Páginas de informação',nova:'Criar página',editar:'Editar página',pagina:state.record?.title,pessoas:'Pessoas',pessoa:'Pessoa',perfis:'Perfis',perfil:'Perfil'}[state.route]||'Buscar');}
-function load(){disposeRecorder?.();disposeRecorder=null;const [path,queryString='']=(location.hash.slice(1)||defaults[document.body.dataset.page]||'buscar').split('?'),[route,id]=path.split('/'),params=new URLSearchParams(queryString);Object.assign(state,{route,routes:readRoutes(),query:params.get('q')||'',searched:params.has('q')||params.has('todos'),filterIds:null,archived:params.get('arquivadas')==='1',warning:''});let content,routeRecord=null;
- if(!admin()&&!['buscar','pagina','mapas','percurso','navegar'].includes(route)){render(view.denied());return;}
+function render(content){disposeRecorder?.();disposeRecorder=null;app.innerHTML=view.frame(state,content);setupHomeVideo();document.title='Localiza · '+({mapas:'Criar e testar rotas','criar-mapa':'Criar percurso',percurso:'Percurso',buscar:'Buscar',administracao:'Administração',paginas:'Páginas de informação',nova:'Criar página',editar:'Editar página',pagina:state.record?.title,pessoas:'Pessoas',pessoa:'Pessoa',perfis:'Perfis',perfil:'Perfil'}[state.route]||'Buscar');}
+function load(){disposeRecorder?.();disposeRecorder=null;const [path,queryString='']=(location.hash.slice(1)||defaults[document.body.dataset.page]||'buscar').split('?'),[route,id]=path.split('/'),params=new URLSearchParams(queryString);Object.assign(state,{route,navigationFromAdmin:route==='navegar'&&params.get('voltar')==='mapas'&&admin(),routes:readRoutes(),query:params.get('q')||'',searched:params.has('q')||params.has('todos'),filterIds:null,archived:params.get('arquivadas')==='1',warning:''});let content,routeRecord=null;
+ if(!admin()&&route==='mapas'){navigate('buscar?todos=1');return;}
+ if(!admin()&&!['buscar','pagina','percurso','navegar'].includes(route)){render(view.denied());return;}
  if(route==='buscar')content=state.searched?view.results(state):view.home(state);
- else if(route==='mapas')content=routeViews.list(state.routes,admin(),Boolean(readDraft()),view.searchForm({...state,query:''}));
+ else if(route==='mapas')content=routeViews.list(state.routes,admin(),Boolean(readDraft()));
  else if(route==='criar-mapa')content=routeViews.workspace();
  else if(route==='editar-percurso'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?routeViews.workspace(routeRecord):view.denied();}
- else if(route==='navegar'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?navigationPage(routeRecord,{backTo:params.get('voltar')}):view.denied();}
+ else if(route==='navegar'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?navigationPage(routeRecord,{testing:state.navigationFromAdmin,backTo:params.get('voltar')==='mapas'?(admin()?'mapas':'buscar?todos=1'):params.get('voltar')}):view.denied();}
  else if(route==='percurso'){const record=readRoutes().find(item=>item.id===id);content=record?routeViews.detail(record,admin()):view.denied();}
  else if(route==='administracao')content=view.admin(state);
  else if(route==='paginas')content=view.manage(state);

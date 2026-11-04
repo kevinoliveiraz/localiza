@@ -64,5 +64,7 @@ const routeOnly=view.results(searchState);check(routeOnly.includes('1 rota encon
 check(view.results({...searchState,query:'ausente'}).includes('Nenhuma informação ou rota encontrada'),true);
 const mixed=view.results({...searchState,query:'',filterIds:[]});check(mixed.includes('Iniciar rota'),true);check(mixed.includes('Aprovações e responsáveis'),false);
 const hostileRoute=view.results({...searchState,query:'',routes:[{...savedRoute,title:'<img src=x onerror=alert(1)>',start:'<script>teste</script>'}]});check(hostileRoute.includes('<img'),false);check(hostileRoute.includes('&lt;img'),true);check(hostileRoute.includes('<script>'),false);
-const returnPage=navigationPage(savedRoute,{backTo:'buscar?q=reuni%C3%A3o'});check(returnPage.includes('href="#buscar?q=reuni%C3%A3o"'),true);check(returnPage.includes('Voltar à busca'),true);check(navigationPage(savedRoute,{backTo:'javascript:alert(1)'}).includes('href="#mapas"'),true);
+const returnPage=navigationPage(savedRoute,{backTo:'buscar?q=reuni%C3%A3o'});check(returnPage.includes('href="#buscar?q=reuni%C3%A3o"'),true);check(returnPage.includes('Voltar à busca'),true);check(navigationPage(savedRoute,{backTo:'javascript:alert(1)'}).includes('href="#buscar?todos=1"'),true);
+const adminState={...state,data:{...fixtures,viewer:'admin'}};
+const header=view.frame(adminState,'').split('<nav aria-label="Navegação principal">')[1].split('</nav>')[0];check(header.includes('href="#mapas"'),false);check(header.includes('href="#administracao"'),true);check(view.admin(adminState).includes('Criar e testar rotas'),true);
 console.log(`OK — ${count} verificações do front: pesquisa em tabelas/texto, filtros visuais, edição livre, persistência da prévia e escape de conteúdo.`);
