@@ -3,6 +3,9 @@
 .front-admin-grid .info-admin-card{padding:29px}.front-admin-grid .info-admin-card p{min-height:44px;font-size:14px;line-height:1.8}.front-admin-grid .info-admin-card>strong{font-size:13px}
 .is-route-area{background:radial-gradient(ellipse at 80% 0%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 45%),var(--bg);min-height:100svh}
 .is-route-area .front-header{background:color-mix(in srgb,var(--surface) 92%,transparent)}
+.is-route-area .front-header+.info-main{animation:route-enter .18s ease-out}
+@keyframes route-enter{from{opacity:.4}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.is-route-area .front-header+.info-main{animation:none}}
 .is-route-area .back-link{font-size:13px;min-height:44px;display:inline-flex;align-items:center;gap:9px;margin-bottom:15px}
 .route-brand-heading{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:38px 42px;border:1px solid #afa0ff33;border-radius:24px;color:#fff;position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(105deg,#11142ee8,#242044c9),url('../media/localiza-background-poster.png') center/cover}
 .route-brand-heading h1{font-size:44px;letter-spacing:-.055em;line-height:1.12;color:#fff;margin:17px 0}.route-brand-heading p{color:#ded9f1;font-size:16px;line-height:1.8}.route-section-label{display:flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.09em;color:#cebefb;font-weight:650}
