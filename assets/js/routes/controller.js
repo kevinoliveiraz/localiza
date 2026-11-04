@@ -1,8 +1,8 @@
-import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261103-compass';
-import {startMotionCapture} from './capture.js?v=20261103-compass';
-import {saveRoute,updateRoute} from './store.js?v=20261103-compass';
-import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261103-compass';
-import {pathMarkup,metres} from './views.js?v=20261103-compass';
+import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261104-search';
+import {startMotionCapture} from './capture.js?v=20261104-search';
+import {saveRoute,updateRoute} from './store.js?v=20261104-search';
+import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261104-search';
+import {pathMarkup,metres} from './views.js?v=20261104-search';
 import {I} from '../ui.js';
 
 export function mountRecorder(root,{navigate,capture=startMotionCapture,record=null}={}){
@@ -11,14 +11,14 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
  let method=draft?.method||record?.method||'motion',phase=draft?.phase||(record?'editing':'idle'),points=structuredClone(draft?.points||record?.points||[]),selected=points.length-1;
  let stopCapture=null,tracker=null,disposed=false,generation=0,saved=false,draftTimer=null,gesture=null,frame=projection(points),cursor={x:400,y:320},adjusted=draft?.adjusted||record?.adjusted||false;
  const editable=()=>phase==='editing',snapshot=()=>({points:structuredClone(points),adjusted});
- form.elements.start.value=draft?.start??record?.start??'';form.elements.end.value=draft?.end??record?.end??'';form.elements.stepLength.value=draft?.stepLength||.7;
+ form.elements.title.value=draft?.title??record?.title??'';form.elements.start.value=draft?.start??record?.start??'';form.elements.end.value=draft?.end??record?.end??'';form.elements.stepLength.value=draft?.stepLength||.7;
  const error=message=>{const target=find('[data-route-error]');target.textContent=message||'';target.hidden=!message;};
  const status=message=>{const target=find('[data-route-status]');if(target.textContent!==message)target.textContent=message;};
  function stop(){generation++;stopCapture?.();stopCapture=null;}
  function persist(){
   clearTimeout(draftTimer);if(saved)return;
-  if(!points.length&&!form.elements.start.value&&!form.elements.end.value){clearDraft(draftId);return;}
-  const persisted=writeDraft(draftId,{method,phase,start:form.elements.start.value,end:form.elements.end.value,stepLength:Number(form.elements.stepLength.value),points,adjusted,baseStamp});
+  if(!points.length&&!form.elements.title.value&&!form.elements.start.value&&!form.elements.end.value){clearDraft(draftId);return;}
+  const persisted=writeDraft(draftId,{method,phase,title:form.elements.title.value,start:form.elements.start.value,end:form.elements.end.value,stepLength:Number(form.elements.stepLength.value),points,adjusted,baseStamp});
   const target=find('[data-route-draft-status]'),message=persisted?'Rascunho preservado nesta aba.':'Rascunho apenas nesta página. O navegador não permitiu guardar a edição após recarregar.';if(target.textContent!==message)target.textContent=message;
  }
  function scheduleDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(persist,200);}
@@ -82,7 +82,7 @@ export function mountRecorder(root,{navigate,capture=startMotionCapture,record=n
  async function submit(event){
   event.preventDefault();if(!form.checkValidity()||!form.elements.start.value.trim()||!form.elements.end.value.trim()){revealNames();form.reportValidity();error('Informe os nomes da saída e do destino.');return;}
   if(phase==='review'){
-   try{const input={points,method,start:form.elements.start.value,end:form.elements.end.value,adjusted},route=record?updateRoute(record.id,input,baseStamp):saveRoute(input);saved=true;clearTimeout(draftTimer);clearDraft(draftId);navigate('percurso/'+route.id);}catch(cause){error(cause.message);}return;
+   try{const input={points,method,title:form.elements.title.value,start:form.elements.start.value,end:form.elements.end.value,adjusted},route=record?updateRoute(record.id,input,baseStamp):saveRoute(input);saved=true;clearTimeout(draftTimer);clearDraft(draftId);navigate('percurso/'+route.id);}catch(cause){error(cause.message);}return;
   }
   if(phase!=='idle')return;
   if(method==='manual'){enterEdit();showCanvas();}

@@ -1,9 +1,9 @@
-import {Journey,buildGuide,instruction} from './guidance.js?v=20261103-compass';
-import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261103-compass';
-import {StepTracker,projection} from './model.js?v=20261103-compass';
-import {startMotionCapture} from './capture.js?v=20261103-compass';
-import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261103-compass';
-import {metres} from './views.js?v=20261103-compass';
+import {Journey,buildGuide,instruction} from './guidance.js?v=20261104-search';
+import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261104-search';
+import {StepTracker,projection} from './model.js?v=20261104-search';
+import {startMotionCapture} from './capture.js?v=20261104-search';
+import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261104-search';
+import {metres} from './views.js?v=20261104-search';
 import {esc} from '../ui.js';
 
 export function mountNavigation(root,{route,capture=startMotionCapture}={}){

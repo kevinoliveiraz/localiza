@@ -3,6 +3,8 @@ import {readFile} from 'node:fs/promises';
 import * as store from '../assets/js/front/store.js';
 import * as view from '../assets/js/front/views.js';
 import {appendDemoContent,demoContent} from '../assets/js/front/demo-content.js';
+import {searchRoutes,validateRoute} from '../assets/js/routes/store.js';
+import {navigationPage} from '../assets/js/routes/navigation-views.js';
 let count=0;const check=(a,b)=>{assert.deepEqual(a,b);count++;};
 globalThis.document={body:{dataset:{root:'../'}}};globalThis.localStorage={getItem:()=>null,setItem(){}};
 const fixtures=store.initialData(),titles=items=>items.map(p=>p.title).sort();
@@ -51,4 +53,16 @@ check(store.searchPages(fixtures,'RH').some(page=>page.id==='demo-ramais'),true)
 fixtures.viewer='auxiliar';check(store.searchPages(fixtures,'Aprovações e responsáveis').length,0);check(store.searchPages(fixtures,'Rotinas de apoio').length,1);
 fixtures.viewer='supervisor';check(store.searchPages(fixtures,'Aprovações e responsáveis').length,1);check(store.searchPages(fixtures,'Rotinas de apoio').length,0);
 fixtures.viewer='aprendiz';check(store.searchPages(fixtures,'Integração de aprendizes').length,1);
+// Saved routes join the information search without exposing restricted pages.
+const savedRoute=validateRoute({id:'sala-reuniao',title:'Caminho para reunião',start:'Recepção',end:'Sala Órion',method:'manual',points:[{x:0,y:0},{x:0,y:-5}]}),routes=[savedRoute];
+check(searchRoutes(routes,'REUNIAO').map(item=>item.id),['sala-reuniao']);
+check(searchRoutes(routes,'recepcao').length,1);check(searchRoutes(routes,'orion').length,1);
+check(searchRoutes(routes,'  reunião   recepcao ').length,1);check(searchRoutes(routes,'reunião ausente').length,0);
+check(searchRoutes(routes,'todos').length,1);check(searchRoutes(routes,'').length,1);
+const searchState={...state,data:fixtures,routes,filterIds:null,query:'orion',searched:true};
+const routeOnly=view.results(searchState);check(routeOnly.includes('1 rota encontrada'),true);check(routeOnly.includes('Iniciar rota'),true);check(routeOnly.includes('#navegar/sala-reuniao?voltar='),true);check(routeOnly.includes('front-filters surface'),false);check(routeOnly.includes('Nenhuma informação'),false);
+check(view.results({...searchState,query:'ausente'}).includes('Nenhuma informação ou rota encontrada'),true);
+const mixed=view.results({...searchState,query:'',filterIds:[]});check(mixed.includes('Iniciar rota'),true);check(mixed.includes('Aprovações e responsáveis'),false);
+const hostileRoute=view.results({...searchState,query:'',routes:[{...savedRoute,title:'<img src=x onerror=alert(1)>',start:'<script>teste</script>'}]});check(hostileRoute.includes('<img'),false);check(hostileRoute.includes('&lt;img'),true);check(hostileRoute.includes('<script>'),false);
+const returnPage=navigationPage(savedRoute,{backTo:'buscar?q=reuni%C3%A3o'});check(returnPage.includes('href="#buscar?q=reuni%C3%A3o"'),true);check(returnPage.includes('Voltar à busca'),true);check(navigationPage(savedRoute,{backTo:'javascript:alert(1)'}).includes('href="#mapas"'),true);
 console.log(`OK — ${count} verificações do front: pesquisa em tabelas/texto, filtros visuais, edição livre, persistência da prévia e escape de conteúdo.`);

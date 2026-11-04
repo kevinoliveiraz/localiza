@@ -5,7 +5,7 @@ O responsável testou a navegação anterior e esclareceu que precisa andar sem 
 ## Como usar
 
 1. Abra um mapa salvo em **Mapas → Iniciar percurso**. O padrão agora é **Automático · passos e bússola**.
-2. Vá fisicamente à saída e aponte o topo do aparelho para a direção do primeiro trecho. Use o celular em retrato, com a tela voltada para cima. Toque em **Topo alinhado · Iniciar** e autorize os sensores quando solicitado.
+2. Vá fisicamente à saída e aponte o topo do aparelho para a direção do primeiro trecho. Use o celular em retrato, com a tela voltada para cima. Toque em **Iniciar rota** e autorize os sensores quando solicitado.
 3. Aguarde uma leitura estável da direção antes de caminhar. Os passos deslocam a estimativa e o giro do topo muda a direção, inclusive parado. Girar sem caminhar não aumenta a distância.
 4. O mapa acompanha a direção com a seta à frente. **Ver mapa inteiro** alterna para a vista geral. Curvas e chegada estimada avançam automaticamente, sem botão em cada ponto.
 5. **Pausar percurso** libera sensores e tela ativa. Para **Reorientar**, volte à linha do trecho atual, aponte o topo na direção desse trecho e use o botão de reorientação. Ele estabelece uma nova referência nesse ponto do mapa, não encontra o aparelho sozinho.
@@ -25,7 +25,7 @@ Ao pausar, chegar, sair ou ocultar a página, os sensores são desligados. Uma r
 
 **Estimativa experimental, sem validação física nesta entrega.** Acelerômetro e direção podem acumular deriva, perder/contar passos extras e sofrer interferência. É necessário manter o topo apontado na direção em que se anda. A escala do desenho e o tamanho do passo afetam o resultado; um desenho sem medidas reais não se torna uma planta medida. Não existe posicionamento indoor absoluto, identificação real do corredor, recálculo de outro caminho ou reconhecimento de escadas. O aviso de afastamento compara uma estimativa com o desenho, não determina onde a pessoa está no prédio. A chegada é estimada e deve ser conferida no local.
 
-Tudo continua frontend. O percurso salvo não é alterado pela navegação; coordenadas estimadas e leituras dos sensores não são enviadas ou persistidas. Mapas e rascunhos já existentes mantêm suas chaves e formatos. O modo manual conserva o fluxo anterior. Os recursos novos usam a versão `20261103-compass` para evitar cache antigo no celular.
+Tudo continua frontend. O percurso salvo não é alterado pela navegação; coordenadas estimadas e leituras dos sensores não são enviadas ou persistidas. Mapas e rascunhos já existentes mantêm suas chaves e formatos. O modo manual conserva o fluxo anterior. Os recursos novos usam a versão `20261104-search` para evitar cache antigo no celular.
 
 ## Validação
 

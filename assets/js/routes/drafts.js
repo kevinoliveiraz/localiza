@@ -1,9 +1,9 @@
-import {MAX_POINTS,CUES} from './model.js?v=20261103-compass';
+import {MAX_POINTS,CUES} from './model.js?v=20261104-search';
 const KEY='localiza_route_drafts_v1',memory=new Map();
 function clean(input){
  if(!input||!Array.isArray(input.points)||input.points.length>MAX_POINTS||!['motion','manual'].includes(input.method))return null;
  if(input.points.some(p=>!p||!Number.isFinite(p.x)||!Number.isFinite(p.y)||Math.abs(p.x)>20000||Math.abs(p.y)>20000))return null;
- return {method:input.method,phase:['idle','review'].includes(input.phase)?input.phase:'editing',start:String(input.start||'').slice(0,90),end:String(input.end||'').slice(0,90),points:input.points.map(p=>({x:p.x,y:p.y,...(Object.hasOwn(CUES,p.cue)?{cue:p.cue}:{})})),stepLength:Number(input.stepLength)||.7,adjusted:Boolean(input.adjusted),baseStamp:String(input.baseStamp||'')};
+ return {method:input.method,phase:['idle','review'].includes(input.phase)?input.phase:'editing',title:String(input.title||'').slice(0,90),start:String(input.start||'').slice(0,90),end:String(input.end||'').slice(0,90),points:input.points.map(p=>({x:p.x,y:p.y,...(Object.hasOwn(CUES,p.cue)?{cue:p.cue}:{})})),stepLength:Number(input.stepLength)||.7,adjusted:Boolean(input.adjusted),baseStamp:String(input.baseStamp||'')};
 }
 function collection(){try{const data=JSON.parse(sessionStorage.getItem(KEY)||'{}');return data&&typeof data==='object'&&!Array.isArray(data)?data:{};}catch{return {};}}
 export function readDraft(id='new',baseStamp=''){

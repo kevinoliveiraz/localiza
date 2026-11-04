@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 04/11/2026: encontrar e iniciar rotas pela busca
+
+O responsável pediu simplificar o uso depois de criar um percurso: pesquisar seu nome na busca principal, encontrar a rota e tocar em **Iniciar rota** para abrir o mapa. A busca também procura saída e destino e aceita nomes sem acentos. O resultado de rota tem apenas essa ação; edição e exclusão ficam recolhidas em **Gerenciar rota**. A navegação mantém o automático como padrão e um único botão principal para iniciar depois do alinhamento. Método manual, passo e inversão ficam em **Opções da rota**; etapas e limites em **Etapas e ajuda**. Não restaurar a seleção obrigatória de método. Há nome opcional no editor e preservação em rascunho/edição. A chave e os percursos existentes continuam compatíveis. Rotas seguem locais a cada navegador, sem sincronização ou segurança real por perfil. Consulte `docs/15-ROTAS-NA-BUSCA.md`.
+
 ## Ajuste vigente — 03/11/2026: automático por passos e direção do topo
 
 O responsável esclareceu que quer andar e virar sem clicar a cada ponto, usando o topo físico do celular como frente. **Automático · passos e bússola** é o padrão. A saída exige apenas alinhar o topo ao primeiro trecho e iniciar; a direção gira o mapa/seta mesmo parado e os passos deslocam uma estimativa local. Curvas e chegada estimada avançam automaticamente, sem confirmação obrigatória; o guia manual permanece alternativa. Esta solicitação substitui a exigência de confirmar curvas/escadas/chegada descrita abaixo. O novo estimador usa a direção, limita ajustes a segmentos próximos e avisa quando a estimativa se afasta do traçado. Não chamar de GPS indoor preciso nem alegar validação física. Não inventar movimento por tempo ou em ausência de sensores. Preserve os mapas salvos, frontend e editor. Consulte `docs/14-NAVEGACAO-DE-PERCURSOS.md`.

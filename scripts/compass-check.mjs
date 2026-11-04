@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import {AutoJourney} from '../assets/js/routes/auto-guidance.js?v=20261103-compass';
-import {buildGuide} from '../assets/js/routes/guidance.js?v=20261103-compass';
-import {compassReading,startMotionCapture} from '../assets/js/routes/capture.js?v=20261103-compass';
-import {actionsMarkup,instructionMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261103-compass';
+import {AutoJourney} from '../assets/js/routes/auto-guidance.js?v=20261104-search';
+import {buildGuide} from '../assets/js/routes/guidance.js?v=20261104-search';
+import {compassReading,startMotionCapture} from '../assets/js/routes/capture.js?v=20261104-search';
+import {actionsMarkup,instructionMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261104-search';
 let checks=0;const equal=(a,b)=>{assert.deepEqual(a,b);checks++;},ok=value=>{assert.ok(value);checks++;};
 const route={start:'A',end:'B',points:[{x:0,y:0},{x:0,y:-4,cue:'right'},{x:4,y:-4,cue:'stairs-up'},{x:4,y:0}]},original=JSON.stringify(route),plan=buildGuide(route);
 let at=1000;const reading=(heading,extra={})=>({heading,at:at+=500,source:'relative',level:true,reliable:true,...extra});

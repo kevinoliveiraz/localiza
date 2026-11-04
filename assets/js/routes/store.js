@@ -1,6 +1,12 @@
-import {length,MAX_POINTS,CUES} from './model.js?v=20261103-compass';
+import {length,MAX_POINTS,CUES} from './model.js?v=20261104-search';
 const KEY='localiza_route_maps_v1';
 const label=(value,fallback)=>String(value||'').trim().slice(0,90)||fallback;
+const searchable=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').trim();
+export function searchRoutes(routes,query=''){
+ const term=searchable(query);if(!term||term==='todos')return routes;
+ const words=term.split(/\s+/);
+ return routes.filter(route=>{const text=searchable([route.title,route.start,route.end].join(' '));return words.every(word=>text.includes(word));});
+}
 export function validateRoute(input){
  if(!input||!Array.isArray(input.points)||input.points.length<2||input.points.length>MAX_POINTS)throw new Error('Registre um percurso antes de salvar.');
  if(!['motion','manual'].includes(input.method))throw new Error('Método de captura inválido.');
