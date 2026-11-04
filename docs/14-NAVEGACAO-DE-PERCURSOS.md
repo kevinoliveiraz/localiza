@@ -1,30 +1,38 @@
-# Iniciar percurso — 03/11/2026
+# Navegação automática por passos e bússola — 03/11/2026
 
-O responsável pediu iniciar um percurso como em um aplicativo de mapas. O botão **Iniciar percurso** está na tela de cada mapa salvo, disponível também aos leitores da prévia. Ele abre `#navegar/ID`. A navegação é um guia do caminho já desenhado, com seta, destaque do trecho percorrido, próxima orientação, distância estimada restante, lista de etapas, pausa e chegada.
+O responsável testou a navegação anterior e esclareceu que precisa andar sem clicar em botões a cada ponto, usando o topo físico do celular como frente. Essa instrução substitui o bloqueio manual de curvas/escadas/chegada da entrega anterior.
 
-## Uso
+## Como usar
 
-1. Abra **Mapas**, escolha um percurso salvo e toque em **Iniciar percurso**. Para um desenho novo, revise e salve primeiro.
-2. Se necessário, escolha **Inverter sentido** antes de começar. Esquerda/direita e subir/descer são invertidos no guia, sem modificar o mapa salvo.
-3. Vá fisicamente até a saída indicada e confirme **Estou na saída · Iniciar**.
-4. **Confirmar os pontos** é o padrão: o marcador mostra o último ponto confirmado. Ao alcançar a próxima curva, escada ou destino, confirme a orientação para prosseguir.
-5. **Acompanhar pelos passos** é opcional e experimental: solicita os sensores do celular com o clique do usuário, estima a distância sobre a linha cadastrada e para no próximo ponto de decisão. É possível ajustar o comprimento do passo antes de começar. A posição estimada não atravessa curvas/escadas sem confirmação; a chegada também depende do usuário.
-6. Se houver uma marcação já na saída, ela é apresentada antes do primeiro trecho. No fim, confirme a chegada para concluir. É possível voltar a Mapas ou percorrer novamente.
+1. Abra um mapa salvo em **Mapas → Iniciar percurso**. O padrão agora é **Automático · passos e bússola**.
+2. Vá fisicamente à saída e aponte o topo do aparelho para a direção do primeiro trecho. Use o celular em retrato, com a tela voltada para cima. Toque em **Topo alinhado · Iniciar** e autorize os sensores quando solicitado.
+3. Aguarde uma leitura estável da direção antes de caminhar. Os passos deslocam a estimativa e o giro do topo muda a direção, inclusive parado. Girar sem caminhar não aumenta a distância.
+4. O mapa acompanha a direção com a seta à frente. **Ver mapa inteiro** alterna para a vista geral. Curvas e chegada estimada avançam automaticamente, sem botão em cada ponto.
+5. **Pausar percurso** libera sensores e tela ativa. Para **Reorientar**, volte à linha do trecho atual, aponte o topo na direção desse trecho e use o botão de reorientação. Ele estabelece uma nova referência nesse ponto do mapa, não encontra o aparelho sozinho.
+6. **Guia manual** continua disponível como alternativa quando os sensores não funcionarem. Nesse modo, somente as confirmações movem o marcador.
 
-Ao ocultar/sair da página, os sensores param. A navegação pausa, inclusive quando a página volta pelo cache do navegador. Resultado de permissão e eventos de uma captura antiga são descartados. Se os sensores falharem, o guia pode continuar por confirmação. Não há animação simulando caminhada nem progresso por tempo.
+## Como funciona
+
+`auto-guidance.js` integra cada passo como um deslocamento x/y na direção do topo, usando a orientação inicial para alinhar as coordenadas locais do desenho. A referência é o topo físico (+Y do dispositivo); não se soma a rotação da tela. Usa a bússola quando o navegador fornece orientação absoluta e aceita orientação relativa como referência local quando disponível. Os graus mostrados são do mapa alinhado, não o norte geográfico do prédio.
+
+O progresso é associado apenas aos segmentos próximos da posição estimada e da distância já percorrida, com verificação da direção e limite de avanço por passo. Uma correção pequena pode reduzir deriva perto de um segmento compatível; a estimativa não é teletransportada para um trecho distante. Direção incompatível ou afastamento estimado do traçado gera aviso. Não há deslocamento por relógio, orientação faltante ou leitura de inclinação/precisão inválida. Eventos de uma captura antiga são descartados.
+
+O modo automático não usa os estados de confirmação do guia manual. A estimativa cruza curvas e anotações de escada enquanto caminha e indica chegada ao alcançar a vizinhança do destino no desenho. Uma anotação de escada é uma orientação cadastrada: não mede altura, degraus, andares ou posição vertical.
+
+Ao pausar, chegar, sair ou ocultar a página, os sensores são desligados. Uma referência de orientação que muda durante a sessão pausa e pede reorientação, evitando um salto de direção. Quando suportado e permitido, a navegação tenta manter a tela acesa com Screen Wake Lock; libera esse recurso ao parar. Isso não altera configurações do sistema. Se a API falhar, a navegação não é bloqueada.
 
 ## Limites
 
-O guia **não determina a localização do aparelho no prédio**. O usuário precisa estar na saída correta. Por confirmação, o indicador depende dos pontos informados pelo usuário. Por passos, a estimativa avança sobre o percurso cadastrado: não identifica se a pessoa entrou em outro corredor, não detecta obstáculos nem recalcula desvios. As distâncias dependem da escala do desenho e do passo; não são medições arquitetônicas. Escadas e viradas explícitas têm prioridade sobre as curvas inferidas da geometria. Não há detecção automática de escadas, troca automática de andares, GPS indoor, infraestrutura de posicionamento ou validação física de sensores nesta entrega.
+**Estimativa experimental, sem validação física nesta entrega.** Acelerômetro e direção podem acumular deriva, perder/contar passos extras e sofrer interferência. É necessário manter o topo apontado na direção em que se anda. A escala do desenho e o tamanho do passo afetam o resultado; um desenho sem medidas reais não se torna uma planta medida. Não existe posicionamento indoor absoluto, identificação real do corredor, recálculo de outro caminho ou reconhecimento de escadas. O aviso de afastamento compara uma estimativa com o desenho, não determina onde a pessoa está no prédio. A chegada é estimada e deve ser conferida no local.
 
-A interface continua somente frontend. Não é necessário criar conta. A simulação de perfis não fornece segurança real. A navegação não altera, envia nem duplica o percurso salvo; dados continuam locais no navegador. Não há serviço de mapas, câmera, GPS, voz ou backend novo. A orientação atual é descartada ao sair; iniciar novamente exige confirmar a saída.
+Tudo continua frontend. O percurso salvo não é alterado pela navegação; coordenadas estimadas e leituras dos sensores não são enviadas ou persistidas. Mapas e rascunhos já existentes mantêm suas chaves e formatos. O modo manual conserva o fluxo anterior. Os recursos novos usam a versão `20261103-compass` para evitar cache antigo no celular.
 
-## Código e validação
+## Validação
 
-- `assets/js/routes/guidance.js`: plano simplificado preservando sinais, sentido inverso, instruções e estados de progresso. Um avanço por passos só alcança o próximo ponto; não confirma uma curva ou chegada.
-- `navigation-views.js`: entrada, orientação principal, progresso, seta, controles e etapas.
-- `navigation.js`: confirmação do usuário, permissões, captura, pausa, limpeza e descarte de eventos antigos.
-- `#navegar/ID` é integrado à navegação do front. O editor e os formatos de mapas/rascunhos são preservados.
-- `20261103-navigation` identifica os recursos novos e evita mistura com o cache do editor anterior.
+- `npm run check:compass`: 83 verificações de topo/direção, giro parado, curvas e escadas sem cliques, chegada estimada, direção errada sem progresso fictício, proteção contra salto para um trecho próximo de retorno, leitura inválida/antiga, mudança de referência e liberação dos sensores com dados explicitamente de teste.
+- Harness DOM externo: 50 verificações de fluxo automático, câmera seguindo direção, percurso completo sem confirmações, pausa/reorientação, permissões negadas/tardias, eventos antigos, liberação de sensores e tela ativa. Também são executadas as regressões de edição e integração do app.
+- O controle do navegador está desativado nas configurações Work. Os testes DOM não verificam layout, toque ou precisão física. Uma caminhada com celular Android/iPhone, incluindo curvas e comparação com medidas conhecidas, ainda é necessária antes de tratar a estimativa como confiável.
 
-`npm run check:navigation` contém 103 verificações de plano, inversão, progresso, bloqueio de passos em curvas/escadas/chegada, marcação na saída, pausa, compatibilidade e escape. Um harness DOM separado verifica 47 cenários de interação e ciclo de sensores com um capturador explicitamente falso, além da integração com a navegação do app e dos testes de regressão do editor. Esses testes não validam layout nem movimento real do telefone. O controle de navegador está desativado nas configurações Work desta sessão; a revisão visual e o teste físico devem ser feitos no aparelho. `npm run check` passou na pasta principal após a aplicação da navegação, junto dos testes DOM e de integração.
+`npm run check` passou na versão aplicada à pasta principal, incluindo regressões do front, editor, navegação e sensores.
+
+Referências: [eixos e orientação do dispositivo](https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Orientation_and_motion_data_explained), [Device Orientation and Motion](https://www.w3.org/TR/orientation-event/), [manter a tela ativa](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API).

@@ -34,7 +34,7 @@ Em **Mapas → Criar percurso**, informe a saída A e o destino B. **Com o celul
 
 No editor, arraste A, B ou as curvas; toque na linha para inserir um ponto e no espaço vazio para continuar. Os botões **Reto**, **Esquerda** e **Direita** acrescentam trechos. Selecione um círculo para marcar uma virada ou escada (subir/descer). Há desfazer/refazer e **Voltar à edição** na revisão. Mapas salvos têm **Editar percurso**, que atualiza o mesmo mapa. Rascunhos são preservados nesta aba ao navegar ou recarregar; em Mapas, use **Continue de onde parou**. Fechar a aba encerra o rascunho; mapas salvos permanecem neste navegador.
 
-Para seguir um mapa salvo, escolha **Iniciar percurso**, vá até a saída indicada e confirme **Estou na saída · Iniciar**. O guia mostra a próxima curva/escada, o progresso e a chegada. Você pode confirmar os pontos manualmente ou habilitar acompanhamento experimental por passos. A estimativa para em cada curva/escada e a chegada depende de confirmação. Há pausa e sentido inverso. O guia segue o desenho cadastrado, sem localizar o celular dentro do prédio nem recalcular desvios. Consulte `docs/14-NAVEGACAO-DE-PERCURSOS.md`.
+Para seguir um mapa salvo, escolha **Iniciar percurso**. O padrão é **Automático · passos e bússola**: na saída, aponte o topo físico do celular para o primeiro trecho e toque em **Topo alinhado · Iniciar**. A posição estimada se move pelos passos e pela direção; o mapa acompanha o topo do aparelho e passa pelas curvas sem cliques. Há pausa, reorientação, mapa inteiro, sentido inverso e guia manual como alternativa. A chegada é estimada, sem confirmação obrigatória. O acompanhamento não é localização indoor precisa; depende dos sensores, da escala do desenho e do comprimento do passo. Não detecta a altura de escadas nem recalcula caminhos. Consulte `docs/14-NAVEGACAO-DE-PERCURSOS.md`.
 
 **A captura por sensores é experimental e ainda precisa ser validada numa caminhada real.** Requer celular compatível, HTTPS e permissão de movimento. Não é GPS indoor nem planta medida. A distância e a largura do corredor são referências estimadas/ilustrativas. O servidor local em `localhost` não fornece acesso HTTPS ao celular. Os percursos ficam no navegador, em `localiza_route_maps_v1`, sem envio de dados. Consulte `docs/13-MAPAS-DE-PERCURSO.md`.
 
@@ -47,6 +47,7 @@ Para os detalhes do 3D e as limitações anteriores da análise de vídeo, consu
 - `npm run check:front`: testes do novo fluxo visual, busca em tabelas/texto, simulação de perfis, edição livre e persistência da prévia.
 - `npm run check:routes`: geometria, estimativa de passos/direção, armazenamento e ciclo de permissões/sensores com dados de teste.
 - `npm run check:navigation`: orientações, progresso, sentido inverso, pausa e confirmação de curvas/escadas/chegada, com dados de teste.
+- `npm run check:compass`: avanço automático pela direção do topo, giro sem deslocamento, curvas sem cliques, desvios estimados e qualidade/liberação dos sensores, com dados de teste.
 - `npm run check`: inclui os testes do front e mantém as verificações anteriores de HTML, estado, 3D, vídeo e do módulo de contas preservado.
 
 Direção atual: `docs/11-FRONT-CONSULTA-E-PAGINAS.md`, `docs/12-INICIO-COM-VIDEO.md` e `docs/13-MAPAS-DE-PERCURSO.md`.

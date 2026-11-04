@@ -1,20 +1,24 @@
-import {StepTracker} from './model.js?v=20261103-navigation';
+import {StepTracker} from './model.js?v=20261103-compass';
 // Permission requests stay inside the Start click. The adapter never synthesizes movement.
-export async function startMotionCapture({tracker=new StepTracker(),onStep,onStatus,onFailure,target=window}){
+export function compassReading(event){
+ const hasCompass=Number.isFinite(event.webkitCompassHeading),heading=hasCompass?event.webkitCompassHeading:Number.isFinite(event.alpha)?360-event.alpha:null;
+ const accuracy=Number.isFinite(event.webkitCompassAccuracy)?event.webkitCompassAccuracy:null;
+ return {heading:heading===null?null:(heading%360+360)%360,level:Number.isFinite(event.beta)&&Number.isFinite(event.gamma)&&Math.abs(event.beta)<=50&&Math.abs(event.gamma)<=50,reliable:heading!==null&&(accuracy===null||accuracy>=0&&accuracy<=45),accuracy,absolute:hasCompass||event.absolute===true,source:`${event.type||'deviceorientation'}:${hasCompass?'compass':event.absolute?'absolute':'relative'}`};
+}
+export async function startMotionCapture({tracker=new StepTracker(),onStep,onStatus,onFailure,onHeading,absoluteOrientation=false,target=window}){
  if(!target.isSecureContext)throw new Error('Para capturar no celular, abra o Localiza por HTTPS. Um endereço HTTP da rede local não libera os sensores.');
  if(!target.DeviceMotionEvent||!target.DeviceOrientationEvent)throw new Error('Este navegador não oferece os sensores necessários. Use um celular compatível ou desenhe o percurso.');
- const requests=[target.DeviceMotionEvent,target.DeviceOrientationEvent].map(type=>typeof type.requestPermission==='function'?type.requestPermission():Promise.resolve('granted'));
+ const requests=[target.DeviceMotionEvent,target.DeviceOrientationEvent].map((type,index)=>typeof type.requestPermission==='function'?(index===1?type.requestPermission(absoluteOrientation):type.requestPermission()):Promise.resolve('granted'));
  const permissions=await Promise.all(requests);
  if(permissions.some(value=>value!=='granted'))throw new Error('Acesso ao movimento não autorizado. Você pode permitir os sensores no navegador ou desenhar o percurso.');
- let stopped=false,lastMotion=Date.now(),motionSeen=false,orientationSeen=false,orientationSource=null,level=true;
+ let stopped=false,lastMotion=Date.now(),motionSeen=false,orientationSeen=false,orientationSource=null,level=true,reliable=true;
  const stop=()=>{if(stopped)return;stopped=true;clearInterval(health);target.removeEventListener('devicemotion',motion);target.removeEventListener('deviceorientation',orientation);target.removeEventListener('deviceorientationabsolute',orientation);};
  const fail=message=>{stop();onFailure(message);};
  const orientation=event=>{
   if(stopped)return;
   if(orientationSource&&orientationSource!==event.type)return;
-  level=Number.isFinite(event.beta)&&Number.isFinite(event.gamma)&&Math.abs(event.beta)<45&&Math.abs(event.gamma)<45;
-  const heading=Number.isFinite(event.webkitCompassHeading)?event.webkitCompassHeading:Number.isFinite(event.alpha)?360-event.alpha:null;
-  if(heading!==null){orientationSource=event.type;orientationSeen=true;tracker.orient(heading,Date.now());}
+  const reading=compassReading(event);level=reading.level;reliable=reading.reliable;
+  const at=Date.now();if(reading.heading!==null){orientationSource=event.type;orientationSeen=true;if(level&&reliable)tracker.orient(reading.heading,at);}onHeading?.({...reading,heading:reading.heading!==null&&level&&reliable?tracker.heading:reading.heading,at});
  };
  const motion=event=>{
   if(stopped)return;lastMotion=Date.now();
@@ -22,6 +26,7 @@ export async function startMotionCapture({tracker=new StepTracker(),onStep,onSta
   if(!acceleration||!['x','y','z'].every(k=>Number.isFinite(acceleration[k])))return;
   motionSeen=true;
   if(!level){tracker.resetMotion();onStatus('Mantenha a tela voltada para cima para continuar registrando.');return;}
+  if(!reliable){tracker.resetMotion();onStatus('Bússola imprecisa. Aguarde uma leitura melhor.');return;}
   const step=tracker.sample(acceleration,lastMotion);
   onStatus(!orientationSeen?'Aguardando a direção do celular…':lastMotion-tracker.headingAt>1800?'Aguardando atualização da direção…':'Caminhe com o celular à frente.');
   if(step)onStep(step);

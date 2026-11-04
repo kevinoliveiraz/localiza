@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 03/11/2026: automático por passos e direção do topo
+
+O responsável esclareceu que quer andar e virar sem clicar a cada ponto, usando o topo físico do celular como frente. **Automático · passos e bússola** é o padrão. A saída exige apenas alinhar o topo ao primeiro trecho e iniciar; a direção gira o mapa/seta mesmo parado e os passos deslocam uma estimativa local. Curvas e chegada estimada avançam automaticamente, sem confirmação obrigatória; o guia manual permanece alternativa. Esta solicitação substitui a exigência de confirmar curvas/escadas/chegada descrita abaixo. O novo estimador usa a direção, limita ajustes a segmentos próximos e avisa quando a estimativa se afasta do traçado. Não chamar de GPS indoor preciso nem alegar validação física. Não inventar movimento por tempo ou em ausência de sensores. Preserve os mapas salvos, frontend e editor. Consulte `docs/14-NAVEGACAO-DE-PERCURSOS.md`.
+
 ## Ajuste vigente — 03/11/2026: iniciar e seguir um percurso
 
 O responsável pediu a opção **Iniciar percurso**, como um guia de navegação. Mapas salvos abrem `#navegar/ID`, também para leitores na prévia. O usuário confirma estar na saída e pode seguir por confirmação de pontos ou por estimativa experimental de passos. Curvas, escadas e chegada exigem confirmação; a estimativa não atravessa um ponto de decisão automaticamente. Há sentido inverso, pausa e conclusão. É guia de caminho cadastrado, sem GPS indoor, detecção de desvios ou recálculo. Não salvar navegação como edição nem alterar o mapa original. Leia `docs/14-NAVEGACAO-DE-PERCURSOS.md`. Continua somente frontend; a autorização por perfis permanece simulada.

@@ -1,4 +1,4 @@
-import {length,MAX_POINTS,CUES} from './model.js?v=20261103-navigation';
+import {length,MAX_POINTS,CUES} from './model.js?v=20261103-compass';
 const KEY='localiza_route_maps_v1';
 const label=(value,fallback)=>String(value||'').trim().slice(0,90)||fallback;
 export function validateRoute(input){
