@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 03/11/2026: iniciar e seguir um percurso
+
+O responsável pediu a opção **Iniciar percurso**, como um guia de navegação. Mapas salvos abrem `#navegar/ID`, também para leitores na prévia. O usuário confirma estar na saída e pode seguir por confirmação de pontos ou por estimativa experimental de passos. Curvas, escadas e chegada exigem confirmação; a estimativa não atravessa um ponto de decisão automaticamente. Há sentido inverso, pausa e conclusão. É guia de caminho cadastrado, sem GPS indoor, detecção de desvios ou recálculo. Não salvar navegação como edição nem alterar o mapa original. Leia `docs/14-NAVEGACAO-DE-PERCURSOS.md`. Continua somente frontend; a autorização por perfis permanece simulada.
+
 ## Ajuste vigente — 03/11/2026: edição de percursos no celular
 
 O responsável testou no celular e pediu voltar à edição, arrastar A e as curvas e marcar esquerda/direita/escadas. O editor agora mantém os pontos móveis, insere curvas ao tocar na linha, oferece trechos retos/curvas de 90°, sinalização por ponto e desfazer/refazer. Mapas salvos abrem em `#editar-percurso/ID`, sem duplicar ao salvar; rascunhos são preservados nesta aba em sessionStorage. Não remover percursos antigos nem alterar a chave de mapas já salvos. Capture por sensores continua experimental. Consulte a atualização em `docs/13-MAPAS-DE-PERCURSO.md`.

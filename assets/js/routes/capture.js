@@ -1,4 +1,4 @@
-import {StepTracker} from './model.js?v=20261103-editor';
+import {StepTracker} from './model.js?v=20261103-navigation';
 // Permission requests stay inside the Start click. The adapter never synthesizes movement.
 export async function startMotionCapture({tracker=new StepTracker(),onStep,onStatus,onFailure,target=window}){
  if(!target.isSecureContext)throw new Error('Para capturar no celular, abra o Localiza por HTTPS. Um endereço HTTP da rede local não libera os sensores.');

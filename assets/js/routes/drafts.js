@@ -1,4 +1,4 @@
-import {MAX_POINTS,CUES} from './model.js?v=20261103-editor';
+import {MAX_POINTS,CUES} from './model.js?v=20261103-navigation';
 const KEY='localiza_route_drafts_v1',memory=new Map();
 function clean(input){
  if(!input||!Array.isArray(input.points)||input.points.length>MAX_POINTS||!['motion','manual'].includes(input.method))return null;

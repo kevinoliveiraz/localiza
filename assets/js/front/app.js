@@ -1,10 +1,12 @@
 import * as store from './store.js';
-import * as view from './views.js?v=20261103-editor';
+import * as view from './views.js?v=20261103-navigation';
 import {read,save} from '../store.js';
-import * as routeViews from '../routes/views.js?v=20261103-editor';
-import {readRoutes,removeRoute} from '../routes/store.js?v=20261103-editor';
-import {mountRecorder} from '../routes/controller.js?v=20261103-editor';
-import {readDraft} from '../routes/drafts.js?v=20261103-editor';
+import * as routeViews from '../routes/views.js?v=20261103-navigation';
+import {readRoutes,removeRoute} from '../routes/store.js?v=20261103-navigation';
+import {mountRecorder} from '../routes/controller.js?v=20261103-navigation';
+import {readDraft} from '../routes/drafts.js?v=20261103-navigation';
+import {navigationPage} from '../routes/navigation-views.js?v=20261103-navigation';
+import {mountNavigation} from '../routes/navigation.js?v=20261103-navigation';
 const app=document.getElementById('app');
 let disposeRecorder=null;
 const defaults={administracao:'administracao',membros:'pessoas',departamentos:'perfis',mapeamento:'mapas'};
@@ -17,11 +19,12 @@ function syncMotionButton(){const button=document.querySelector('[data-front-act
 function setupHomeVideo(){const video=document.querySelector('[data-home-video]');if(!video||state.motionPaused)return;video.muted=true;video.src=video.dataset.videoSrc;video.play().catch(()=>{if(video.isConnected){state.motionPaused=true;syncMotionButton();}});video.addEventListener('error',()=>{if(video.isConnected){state.motionPaused=true;syncMotionButton();}},{once:true});}
 function render(content){disposeRecorder?.();disposeRecorder=null;app.innerHTML=view.frame(state,content);setupHomeVideo();document.title='Localiza · '+({mapas:'Mapas de percurso','criar-mapa':'Criar percurso',percurso:'Percurso',buscar:'Buscar',administracao:'Administração',paginas:'Páginas de informação',nova:'Criar página',editar:'Editar página',pagina:state.record?.title,pessoas:'Pessoas',pessoa:'Pessoa',perfis:'Perfis',perfil:'Perfil'}[state.route]||'Buscar');}
 function load(){disposeRecorder?.();disposeRecorder=null;const [path,queryString='']=(location.hash.slice(1)||defaults[document.body.dataset.page]||'buscar').split('?'),[route,id]=path.split('/'),params=new URLSearchParams(queryString);Object.assign(state,{route,query:params.get('q')||'',searched:params.has('q')||params.has('todos'),filterIds:null,archived:params.get('arquivadas')==='1',warning:''});let content,routeRecord=null;
- if(!admin()&&!['buscar','pagina','mapas','percurso'].includes(route)){render(view.denied());return;}
+ if(!admin()&&!['buscar','pagina','mapas','percurso','navegar'].includes(route)){render(view.denied());return;}
  if(route==='buscar')content=state.searched?view.results(state):view.home(state);
  else if(route==='mapas')content=routeViews.list(readRoutes(),admin(),Boolean(readDraft()));
  else if(route==='criar-mapa')content=routeViews.workspace();
  else if(route==='editar-percurso'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?routeViews.workspace(routeRecord):view.denied();}
+ else if(route==='navegar'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?navigationPage(routeRecord):view.denied();}
  else if(route==='percurso'){const record=readRoutes().find(item=>item.id===id);content=record?routeViews.detail(record,admin()):view.denied();}
  else if(route==='administracao')content=view.admin(state);
  else if(route==='paginas')content=view.manage(state);
@@ -32,7 +35,7 @@ function load(){disposeRecorder?.();disposeRecorder=null;const [path,queryString
  else if(route==='perfis')content=view.profiles(state);
  else if(route==='perfil'){state.profile=state.data.profiles.find(p=>p.id===id)||null;if(id!=='novo'&&!state.profile){render(view.denied());return;}content=view.profileForm(state);}
  else{navigate('buscar');return;}
- render(content);if(route==='criar-mapa'||route==='editar-percurso'&&routeRecord)disposeRecorder=mountRecorder(document.querySelector('[data-route-workspace]'),{navigate,record:routeRecord});if(route==='editar-percurso')document.title='Localiza · Editar percurso';document.getElementById('conteudo')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});state.message='';
+ render(content);if(route==='criar-mapa'||route==='editar-percurso'&&routeRecord)disposeRecorder=mountRecorder(document.querySelector('[data-route-workspace]'),{navigate,record:routeRecord});if(route==='editar-percurso')document.title='Localiza · Editar percurso';if(route==='navegar'&&routeRecord){disposeRecorder=mountNavigation(document.querySelector('[data-route-navigation]'),{route:routeRecord});document.title='Localiza · Navegar até '+routeRecord.end;}document.getElementById('conteudo')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});state.message='';
 }
 function collectPage(form){const fields=new FormData(form),table=state.draft.table?{columns:[...form.querySelectorAll('[data-column]')].map(input=>input.value),rows:state.draft.table.rows.map((_,row)=>state.draft.table.columns.map((_,col)=>form.querySelector(`[data-cell-row="${row}"][data-cell-column="${col}"]`)?.value||''))}:null;return {...state.draft,title:fields.get('title'),body:fields.get('body'),link:fields.get('link'),audience:fields.get('audience'),profileIds:fields.getAll('profileIds'),table};}
 function showError(form,error){const target=form.querySelector('[data-front-error]');target.textContent=error.message;target.hidden=false;target.focus();}

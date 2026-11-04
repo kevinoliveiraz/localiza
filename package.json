@@ -6,13 +6,14 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
-    "check": "node --check assets/js/front/app.js && node --check assets/js/front/views.js && node --check assets/js/front/store.js && node --check assets/js/main.js && node --check assets/js/information/app.js && node --check assets/js/information/api.js && node --check assets/js/information/views.js && node --check server/information-api.mjs && node --check server/information-store.mjs && node --check scripts/dev-server.mjs && node scripts/smoke-test.mjs && node scripts/ui-check.mjs && node scripts/information-check.mjs && node scripts/state-check.mjs && node scripts/spatial-check.mjs && node scripts/video-check.mjs && node scripts/front-check.mjs && node scripts/routes-check.mjs",
+    "check": "node --check assets/js/front/app.js && node --check assets/js/front/views.js && node --check assets/js/front/store.js && node --check assets/js/main.js && node --check assets/js/information/app.js && node --check assets/js/information/api.js && node --check assets/js/information/views.js && node --check server/information-api.mjs && node --check server/information-store.mjs && node --check scripts/dev-server.mjs && node scripts/smoke-test.mjs && node scripts/ui-check.mjs && node scripts/information-check.mjs && node scripts/state-check.mjs && node scripts/spatial-check.mjs && node scripts/video-check.mjs && node scripts/front-check.mjs && node scripts/routes-check.mjs && node scripts/navigation-check.mjs",
     "check:information": "node scripts/information-check.mjs",
     "setup:photos": "node scripts/setup-photos.mjs",
     "vendor": "node scripts/vendor-three.mjs",
     "setup:video": "node scripts/setup-photos.mjs",
     "check:front": "node scripts/front-check.mjs",
-    "check:routes": "node scripts/routes-check.mjs"
+    "check:routes": "node scripts/routes-check.mjs",
+    "check:navigation": "node scripts/navigation-check.mjs"
   },
   "engines": {
     "node": ">=20"

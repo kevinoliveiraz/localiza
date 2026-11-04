@@ -1,8 +1,8 @@
-import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261103-editor';
-import {startMotionCapture} from './capture.js?v=20261103-editor';
-import {saveRoute,updateRoute} from './store.js?v=20261103-editor';
-import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261103-editor';
-import {pathMarkup,metres} from './views.js?v=20261103-editor';
+import {StepTracker,addPoint,length,projection,toCanvas,fromCanvas,movePoint,nextSegment,simplifyPoints,EditHistory,CUES,pointName,distance} from './model.js?v=20261103-navigation';
+import {startMotionCapture} from './capture.js?v=20261103-navigation';
+import {saveRoute,updateRoute} from './store.js?v=20261103-navigation';
+import {readDraft,writeDraft,clearDraft} from './drafts.js?v=20261103-navigation';
+import {pathMarkup,metres} from './views.js?v=20261103-navigation';
 import {I} from '../ui.js';
 
 export function mountRecorder(root,{navigate,capture=startMotionCapture,record=null}={}){

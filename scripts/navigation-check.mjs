@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {Journey,buildGuide,inferredCue,instruction} from '../assets/js/routes/guidance.js?v=20261103-navigation';
+import {navigationPage,instructionMarkup,actionsMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261103-navigation';
+import {projection} from '../assets/js/routes/model.js?v=20261103-navigation';
+import {detail} from '../assets/js/routes/views.js?v=20261103-navigation';
+let count=0;const equal=(a,b)=>{assert.deepEqual(a,b);count++;},ok=value=>{assert.ok(value);count++;},throws=fn=>{assert.throws(fn);count++;};
+const route={id:'teste',start:'Entrada',end:'Destino',method:'manual',points:[{x:0,y:0},{x:0,y:-4,cue:'right'},{x:4,y:-4,cue:'stairs-up'},{x:4,y:-7}]},original=JSON.stringify(route);
+const plan=buildGuide(route);equal(plan.total,11);equal(plan.legs.map(l=>l.cue),['right','stairs-up','arrival']);equal(instruction('stairs-up'),'Suba a escada');
+equal(inferredCue([{x:0,y:0},{x:0,y:-2},{x:-2,y:-2}],1),'left');equal(inferredCue([{x:0,y:0},{x:0,y:-2},{x:0,y:-4}],1),'straight');equal(inferredCue([{x:0,y:0},{x:0,y:-2},{x:0,y:0}],1),'back');
+const reversed=buildGuide(route,true);equal(reversed.start,'Destino');equal(reversed.end,'Entrada');equal(reversed.legs.map(l=>l.cue),['stairs-down','left','arrival']);equal(reversed.total,11);equal(JSON.stringify(route),original);
+const compact=buildGuide({...route,points:[{x:0,y:0},{x:0,y:-1},{x:0,y:-2},{x:0,y:-3,cue:'stairs-up'},{x:0,y:-4}]});equal(compact.points.length,3);equal(compact.legs[0].cue,'stairs-up');
+throws(()=>buildGuide({...route,points:[{x:0,y:0},{x:0,y:0}]}));throws(()=>buildGuide({...route,points:[{x:NaN,y:0},{x:1,y:0}]}));
+const duplicate=buildGuide({...route,points:[{x:0,y:0},{x:0,y:0},{x:3,y:0}]});equal(duplicate.legs.length,1);equal(duplicate.total,3);
+const trip=new Journey(plan);equal(trip.phase,'ready');equal(trip.advance(.7),false);equal(trip.confirm(),false);equal(trip.remaining,11);equal(trip.start(),true);equal(trip.start(),false);
+equal(trip.advance(.7),true);equal(trip.position,{x:0,y:-.7});ok(Math.abs(trip.remaining-10.3)<1e-9);equal(trip.heading,0);equal(trip.advance(NaN),false);equal(trip.advance(100),false);
+equal(trip.pause(),true);equal(trip.advance(.7),false);equal(trip.resume(),true);equal(trip.reach(),true);equal(trip.phase,'checkpoint');equal(trip.position,{x:0,y:-4});equal(trip.index,0);
+// A burst of queued steps cannot cross an unconfirmed corner or stairs.
+for(let i=0;i<30;i++)equal(trip.advance(1),false);equal(trip.index,0);equal(trip.confirm(),true);equal(trip.index,1);equal(trip.along,0);equal(trip.heading,90);
+for(let i=0;i<6;i++)trip.advance(.7);equal(trip.phase,'checkpoint');equal(trip.cue,'stairs-up');equal(trip.index,1);equal(trip.advance(.7),false);equal(trip.confirm(),true);equal(trip.index,2);
+for(let i=0;i<6;i++)trip.advance(.7);equal(trip.phase,'checkpoint');equal(trip.remaining,0);ok(trip.phase!=='arrived');equal(trip.confirm(),true);equal(trip.phase,'arrived');equal(trip.position,{x:4,y:-7});equal(trip.advance(1),false);equal(trip.confirm(),false);
+const departure=new Journey(buildGuide({...route,points:[{x:0,y:0,cue:'stairs-up'},{x:0,y:-4}]}));departure.start();equal(departure.phase,'departure');equal(departure.cue,'stairs-up');equal(departure.advance(.7),false);departure.confirm();equal(departure.phase,'active');equal(departure.along,0);
+const inverseStart=new Journey(buildGuide({...route,points:[{x:0,y:0},{x:0,y:-4,cue:'stairs-up'}]},true));inverseStart.start();equal(inverseStart.cue,'stairs-down');equal(inverseStart.phase,'departure');
+const paused=new Journey(plan);paused.start();paused.advance(.7);paused.pause();paused.resetEstimate();equal(paused.along,0);equal(paused.phase,'active');
+const malicious={...route,start:'<img onerror=alert(1)>',end:'<script>x</script>'};const html=navigationPage(malicious);ok(!html.includes('<img'));ok(html.includes('&lt;img'));const unsafeTrip=new Journey(buildGuide(malicious));ok(!instructionMarkup(unsafeTrip).includes('<img'));
+ok(detail(route,true).includes('#navegar/teste'));ok(detail(route,false).includes('#navegar/teste'));ok(!detail(route,false).includes('#editar-percurso/'));ok(actionsMarkup(new Journey(plan)).includes('data-nav-action="start"'));ok(instructionMarkup(trip).includes('Você chegou'));ok(navigationMap(trip,projection(plan.points),2).includes('route-nav-position'));
+console.log(`OK — ${count} verificações de navegação: instruções, sentido inverso, progresso, pausa, confirmação de curvas/escadas/chegada, compatibilidade e escape. Não valida localização física.`);
