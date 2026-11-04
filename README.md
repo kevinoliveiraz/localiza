@@ -8,7 +8,7 @@ O início recebeu uma composição com o vídeo fornecido pelo responsável, bus
 
 Execute `npm run dev` e abra http://localhost:5173/. A entrada abre diretamente na busca, sem e-mail ou senha. O front também funciona com um servidor estático, como Live Server.
 
-Teste online: [abrir o Localiza](https://kevinoliveiraz.github.io/localiza/) ou [criar um percurso](https://kevinoliveiraz.github.io/localiza/#criar-mapa). O GitHub Pages publica a raiz de `main` como site estático em HTTPS; `.nojekyll` mantém os arquivos originais. Não há backend hospedado. Os percursos continuam salvos apenas no navegador de cada aparelho.
+Teste online: [abrir o Localiza](https://kevinoliveiraz.github.io/localiza/) ou [criar um percurso](https://kevinoliveiraz.github.io/localiza/#criar-mapa). O workflow **Publicar Localiza** publica os arquivos estáticos de `main` no GitHub Pages em HTTPS; `.nojekyll` mantém os arquivos originais. Há apenas uma publicação por vez, com ações oficiais fixadas por SHA. Não há backend hospedado. Os percursos continuam salvos apenas no navegador de cada aparelho. Consulte `docs/16-PUBLICACAO-GITHUB-PAGES.md`.
 
 ## Testar o fluxo
 
