@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 03/11/2026: edição de percursos no celular
+
+O responsável testou no celular e pediu voltar à edição, arrastar A e as curvas e marcar esquerda/direita/escadas. O editor agora mantém os pontos móveis, insere curvas ao tocar na linha, oferece trechos retos/curvas de 90°, sinalização por ponto e desfazer/refazer. Mapas salvos abrem em `#editar-percurso/ID`, sem duplicar ao salvar; rascunhos são preservados nesta aba em sessionStorage. Não remover percursos antigos nem alterar a chave de mapas já salvos. Capture por sensores continua experimental. Consulte a atualização em `docs/13-MAPAS-DE-PERCURSO.md`.
+
 ## Prioridade vigente — 02/11/2026: percursos simples A → B
 
 O responsável pediu que a criação de mapas passe a registrar uma caminhada em corredores internos e gere apenas um percurso em 2D visto de cima. A entrada principal é **Mapas → Criar percurso** (`assets/js/routes/`), com captura experimental por passos/direção do celular e desenho manual identificado para teste. Leia `docs/13-MAPAS-DE-PERCURSO.md`. Não apresentar a estimativa como GPS indoor preciso, planta medida ou captura física já validada. Não adicionar objetos/câmera/3D a esse fluxo. O editor 3D anterior continua como ferramenta secundária. Esta solicitação substitui as instruções antigas de manter a criação de mapas intocada. A etapa permanece somente frontend, com percursos locais e sem backend. Preservar busca, informações, perfis, tema e a página inicial com vídeo sem moldura.

@@ -1,5 +1,21 @@
 # Mapas de percurso — 02/11/2026
 
+## Atualização de 03/11/2026 — edição por toque
+
+A primeira experiência móvel só acrescentava pontos e bloqueava o desenho ao concluir. Agora:
+
+- Arrastar A, B ou uma curva reposiciona aquele ponto. A captura do gesto usa Pointer Events; um gesto cancelado restaura a posição anterior, sem acrescentar pontos. A página continua rolável fora do quadro.
+- Tocar na linha insere uma curva entre dois pontos. Tocar no espaço vazio acrescenta o próximo ponto. Os botões Reto/Esquerda/Direita continuam a partir do último ponto com um comprimento escolhido (referência visual), incluindo a quebra de 90°.
+- O ponto selecionado pode receber `Vire à esquerda`, `Vire à direita`, `Escada — subir` ou `Escada — descer`. A sinalização acompanha o ponto ao mover/inserir/remover outros pontos e aparece também no mapa salvo e na lista de orientações. É uma indicação manual; não detecta escadas nem liga andares automaticamente.
+- A revisão possui **Voltar à edição**. A tela de um mapa salvo possui **Editar percurso**, pela rota `#editar-percurso/ID`; salvar atualiza o mesmo ID e preserva a data de criação. Uma edição concorrente em outra aba é detectada antes de sobrescrever.
+- Há desfazer/refazer, remoção de pontos e retorno aos nomes de A/B. No teclado, selecione um círculo e use as setas para mover (Shift amplia o passo); Enter seleciona e Delete remove. No quadro vazio, setas e Enter criam pontos.
+- O rascunho é preservado nesta aba ao sair da tela ou recarregar. Em Mapas aparece **Continue de onde parou**. `sessionStorage` usa uma chave separada, `localiza_route_drafts_v1`; fechar a aba encerra esse rascunho. O mapa salvo continua em `localiza_route_maps_v1`, com o mesmo formato compatível e `cue` opcional em cada ponto. Falha de armazenamento é informada. A captura física não reinicia automaticamente ao retomar um rascunho.
+- Ao ajustar uma caminhada, pontos intermediários alinhados são simplificados, preservando A/B, curvas e sinalizações, e o resultado é identificado como caminhada com ajustes manuais. Isso não aumenta a precisão dos sensores.
+
+Os recursos alterados têm a versão `20261103-editor` na URL para evitar misturar arquivos novos com o cache da versão anterior no celular. A publicação continua no GitHub Pages em HTTPS.
+
+Validação da atualização: 201 verificações de geometria/dados/permissões e 36 verificações DOM de arraste, cancelamento, inserção, marcação, revisão, rascunho e atualização sem duplicar, além da integração da navegação do app. `npm run check` passou na pasta principal após a aplicação da atualização. O controle do navegador foi desativado nas configurações Work durante esta atualização; o harness DOM não valida layout, toque físico ou sensores reais. Essas verificações permanecem para o teste no telefone.
+
 O responsável substituiu a criação complexa de ambientes por um percurso A → B em corredores internos. A saída principal agora é uma linha em 2D vista de cima, com uma faixa ilustrativa de corredor. Não há salas, móveis, texturas, vídeo, câmera ou reconstrução 3D neste fluxo. O editor 3D anterior continua nas ferramentas secundárias da Administração.
 
 ## Fluxo implementado no front

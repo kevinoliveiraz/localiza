@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import {StepTracker,addPoint,length,fitPath,angleDelta,MAX_POINTS} from '../assets/js/routes/model.js';
-import {validateRoute,readRoutes,saveRoute,removeRoute} from '../assets/js/routes/store.js';
+import {StepTracker,addPoint,length,fitPath,angleDelta,MAX_POINTS,projection,toCanvas,fromCanvas,nextSegment,movePoint,simplifyPoints,EditHistory} from '../assets/js/routes/model.js';
+import {validateRoute,readRoutes,saveRoute,removeRoute,updateRoute} from '../assets/js/routes/store.js';
+import {readDraft,writeDraft,clearDraft} from '../assets/js/routes/drafts.js';
 import {startMotionCapture} from '../assets/js/routes/capture.js';
 import {mountRecorder} from '../assets/js/routes/controller.js';
 import * as views from '../assets/js/routes/views.js';
@@ -32,6 +33,32 @@ const routeHTML=views.detail({...saved,title:'<img src=x onerror=alert(1)>'},tru
 ok(views.list([],true).includes('#criar-mapa'));ok(!views.list([],false).includes('#criar-mapa'));
 removeRoute(saved.id);equal(readRoutes(),[]);stored='broken';equal(readRoutes(),[]);stored=JSON.stringify([{points:[]},saved]);equal(readRoutes().length,1);
 localStorage.setItem=()=>{throw new Error('quota');};throws(()=>saveRoute(input));
+
+// Editing must preserve saved routes, marker associations and undo snapshots.
+const editablePoints=[{x:0,y:0},{x:0,y:-3,cue:'right'},{x:4,y:-3,cue:'stairs-up'}];
+const frame=projection(editablePoints),roundtrip=fromCanvas(toCanvas(editablePoints[1],frame),frame);
+ok(Math.abs(roundtrip.x-editablePoints[1].x)<1e-9&&Math.abs(roundtrip.y-editablePoints[1].y)<1e-9);
+const right=nextSegment(editablePoints.slice(0,2),'right',4);ok(Math.abs(right.x-4)<1e-9&&Math.abs(right.y+3)<1e-9);
+const left=nextSegment(editablePoints.slice(0,2),'left',4);ok(Math.abs(left.x+4)<1e-9&&Math.abs(left.y+3)<1e-9);
+throws(()=>nextSegment([]));throws(()=>nextSegment(editablePoints,'right',0));
+equal(movePoint(editablePoints,0,{x:-1,y:1}),true);equal(editablePoints[1].cue,'right');equal(movePoint(editablePoints,1,{x:-1,y:1}),false);
+const dense=[{x:0,y:0},{x:0,y:-1},{x:0,y:-2,cue:'stairs-up'},{x:0,y:-3},{x:1,y:-3},{x:2,y:-3}];
+const simple=simplifyPoints(dense);equal(simple,[dense[0],dense[2],dense[3],dense[5]]);equal(simplifyPoints([{x:0,y:0},{x:1,y:1},{x:0,y:0}]).length,3);
+const edits=new EditHistory(2);edits.push(editablePoints);const modified=structuredClone(editablePoints);modified[1].x=6;
+equal(edits.undo(modified),editablePoints);equal(edits.redo(editablePoints),modified);edits.push(modified);equal(edits.future.length,0);
+localStorage.setItem=(_,value)=>{stored=value;};stored=null;
+const before=saveRoute({...input,points:editablePoints}),stamp=before.createdAt;
+const updated=updateRoute(before.id,{...before,end:'Novo destino',title:'',points:editablePoints},stamp);
+equal(updated.id,before.id);equal(updated.createdAt,before.createdAt);equal(readRoutes().length,1);equal(updated.points[2].cue,'stairs-up');ok(updated.updatedAt!==stamp);
+throws(()=>updateRoute(before.id,{...updated,end:'Conflito'},stamp));equal(readRoutes()[0].end,'Novo destino');
+const legacy=validateRoute(input);equal(legacy.points[0].cue,undefined);
+const badCue=validateRoute({...input,points:[{x:0,y:0,cue:'<script>'},{x:2,y:0}]});equal(badCue.points[0].cue,undefined);
+ok(views.detail(updated,true).includes('#editar-percurso/'));ok(views.detail(updated,true).includes('Suba a escada'));ok(!views.detail(updated,false).includes('#editar-percurso/'));
+const session=new Map();globalThis.sessionStorage={getItem:key=>session.get(key)||null,setItem:(key,value)=>session.set(key,value)};
+const draftInput={method:'manual',phase:'recording',start:'A',end:'B',points:editablePoints,baseStamp:''};
+equal(writeDraft('new',draftInput),true);equal(readDraft().phase,'editing');equal(readDraft().points[2].cue,'stairs-up');equal(readDraft('new','changed'),null);
+equal(writeDraft('invalid',{...draftInput,points:[{x:NaN,y:0}]}),false);
+sessionStorage.setItem=()=>{throw new Error('quota');};equal(writeDraft('new',{...draftInput,end:'Mais recente'}),false);equal(readDraft().end,'Mais recente');clearDraft();equal(readDraft(),null);
 
 // Browser API adapter tests use an explicitly fake event target, never real device permissions.
 const listeners=new Map();let permissionCalls=0,failed='',steps=0;
