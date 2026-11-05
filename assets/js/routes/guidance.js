@@ -1,4 +1,4 @@
-import {distance,simplifyPoints,CUES} from './model.js?v=20261104-mobile';
+import {distance,simplifyPoints,CUES} from './model.js?v=20261104-align';
 const inverse={left:'right',right:'left','stairs-up':'stairs-down','stairs-down':'stairs-up'};
 export function inferredCue(points,index){
  const explicit=points[index]?.cue;if(Object.hasOwn(CUES,explicit))return explicit;

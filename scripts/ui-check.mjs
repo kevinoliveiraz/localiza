@@ -39,6 +39,6 @@ for(const name of ['informationPage','informationForm','informationDetail','admi
  const html=views.frame(state,views[name](state));if(!html.includes('<header')||!html.includes('</main>'))throw Error(`Falha ao renderizar ${name}`);if(html.includes('<script>alert(1)</script>')||html.includes('<img src=x'))throw Error(`Texto não escapado em ${name}`);validations++;
 }
 const reader={...state,session:{...state.session,user:{id:'reader',name:'Leitor teste',role:'member',profileIds:['aux']}}};
-if(views.frame(reader,views.informationPage(reader)).includes('>Administração</a>'))throw Error('Menu de administração exposto ao leitor');
+if(views.frame(reader,views.informationPage(reader)).includes('>Ferramentas</a>'))throw Error('Menu de administração exposto ao leitor');
 if(!views.authPage({configured:false}).includes('data-info-form="setup"')||!views.authPage({configured:true}).includes('data-info-form="login"'))throw Error('Entrada inválida');
 console.log(`OK — ${names.length} telas espaciais, 8 novas vistas, entrada, escape de conteúdo e ${validations} verificações de interface/links.`);

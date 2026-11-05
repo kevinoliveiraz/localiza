@@ -30,7 +30,7 @@ function render(){
  if(hasRendered)document.getElementById('main-content')?.classList?.add('is-static');
  hasRendered=true;
  document.documentElement.dataset.theme=read().theme==='dark'?'dark':'light';
- const titles={home:'Novas possibilidades',painel:'Visão geral',administracao:'Administração',ambientes:'Espaços',mapa:'Explorar espaços',departamentos:'Grupos e acessos',membros:'Pessoas',mapeamento:'Estúdio 3D',editor:'Editor de ambientes',relatorios:'Atividade',organizar:'Seu workspace',conta:'Sobre você',finalizar:'Tudo pronto',acessar:'Abrir demonstração'};
+ const titles={home:'Novas possibilidades',painel:'Visão geral',administracao:'Ferramentas',ambientes:'Espaços',mapa:'Explorar espaços',departamentos:'Grupos e acessos',membros:'Pessoas',mapeamento:'Estúdio 3D',editor:'Editor de ambientes',relatorios:'Atividade',organizar:'Seu workspace',conta:'Sobre você',finalizar:'Tudo pronto',acessar:'Abrir demonstração'};
  document.title=`Localiza · ${titles[page]||'Workspace'}`;
  const spatialRoot=document.getElementById('spatial-root');
  if(spatialRoot?.dataset?.spatial)import('./spatial/controller.js').then(({mountSpatial})=>{if(ticket===spatialRender)disposeSpatial=mountSpatial(spatialRoot,{state});}).catch(error=>{if(ticket===spatialRender){const message=spatialRoot.querySelector('[data-spatial-error]');if(message){message.textContent='Não foi possível abrir o editor: '+error.message;message.hidden=false;}}});

@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 04/11/2026: Ferramentas e alinhamento da rota
+
+O responsável renomeou **Administração** para **Ferramentas** na interface; preservar os endereços internos compatíveis e o papel Administrador. A navegação tem **Alinhar**, uma ação direta para corrigir a referência do topo do celular sem alterar posição/progresso. Na seta ao lado fica **Ajuste automático**, ativado por padrão, com pequenas correções apenas em trechos retos, próximos e estáveis durante passos reais. Não alinhar curvas grandes silenciosamente, mover o ponto ao alinhar nem inventar leituras. Consulte docs/18-FERRAMENTAS-E-ALINHAMENTO.md. Esta instrução substitui o nome visível usado nas seções históricas abaixo.
+
 ## Ajuste vigente — 04/11/2026: celular legível e rotas na Administração
 
 O responsável pediu ampliar o responsivo, alinhar as telas de percurso ao visual aprovado e tirar **Mapas** do menu principal. O menu principal fica em **Buscar**, **Explorar** e **Administração** (esta última somente na simulação de administrador). Criar, editar e testar rotas ficam em **Administração → Rotas**. `#mapas` é mantido como endereço compatível da central administrativa; leitores que abrem esse endereço são conduzidos à busca. A consulta e o início de rotas continuam pela pesquisa, com um único botão **Iniciar rota**. Após salvar há **Testar rota** e **Ver na busca**. No celular, priorizar textos de 14–16 px para uso, campos de 16 px e alvos de toque de 44–54 px; não voltar aos rótulos minúsculos anteriores. O início e os controles da navegação ficam acessíveis no rodapé. A navegação automática, os dados locais e o editor continuam compatíveis. Isto é organização visual da prévia, não autorização real. Leia `docs/17-MOBILE-E-ROTAS-NA-ADMINISTRACAO.md`. A publicação é pelo workflow dedicado em `docs/16-PUBLICACAO-GITHUB-PAGES.md`.

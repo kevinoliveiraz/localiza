@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import {AutoJourney} from '../assets/js/routes/auto-guidance.js?v=20261104-mobile';
-import {buildGuide} from '../assets/js/routes/guidance.js?v=20261104-mobile';
-import {compassReading,startMotionCapture} from '../assets/js/routes/capture.js?v=20261104-mobile';
-import {actionsMarkup,instructionMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261104-mobile';
+import {AutoJourney} from '../assets/js/routes/auto-guidance.js?v=20261104-align';
+import {buildGuide} from '../assets/js/routes/guidance.js?v=20261104-align';
+import {compassReading,startMotionCapture} from '../assets/js/routes/capture.js?v=20261104-align';
+import {actionsMarkup,instructionMarkup,navigationMap} from '../assets/js/routes/navigation-views.js?v=20261104-align';
 let checks=0;const equal=(a,b)=>{assert.deepEqual(a,b);checks++;},ok=value=>{assert.ok(value);checks++;};
 const route={start:'A',end:'B',points:[{x:0,y:0},{x:0,y:-4,cue:'right'},{x:4,y:-4,cue:'stairs-up'},{x:4,y:0}]},original=JSON.stringify(route),plan=buildGuide(route);
 let at=1000;const reading=(heading,extra={})=>({heading,at:at+=500,source:'relative',level:true,reliable:true,...extra});
@@ -28,6 +28,29 @@ stale.updateHeading(reading(null));equal(stale.quality,'waiting-heading');equal(
 stale.updateHeading(reading(40,{source:'absolute'}));equal(stale.phase,'paused');equal(stale.quality,'source-changed');equal(stale.advance(.7,at),false);stale.recalibrate();stale.resume();stale.updateHeading(reading(40,{source:'absolute'}));equal(stale.quality,'tracking');equal(stale.advance(.7,at),true);
 const departure=new AutoJourney(buildGuide({...route,points:[{x:0,y:0,cue:'stairs-up'},{x:0,y:-3}]}));departure.start();equal(departure.phase,'active');
 const reverse=new AutoJourney(buildGuide(route,true));reverse.start();for(let i=0;i<6;i++){reverse.updateHeading(reading(120));reverse.advance(.7,at);}equal(reverse.index,1);equal(reverse.phase,'active');
+
+// Alignment corrects the reference frame, never the pedestrian position/progress.
+const snapshot=j=>({position:j.position,progress:j.travelled,index:j.index,along:j.along,steps:j.steps});
+const align=new AutoJourney(plan);equal(align.alignHeading(at),false);align.start();align.updateHeading(reading(350));align.advance(.7,at);align.updateHeading(reading(80));const beforeAlign=snapshot(align);
+equal(align.alignHeading(at),true);equal(align.heading,0);equal(snapshot(align),beforeAlign);align.updateHeading(reading(170));equal(align.heading,90);equal(snapshot(align),beforeAlign);
+equal(align.alignHeading(at+1801),false);align.updateHeading(reading(170,{level:false}));equal(align.alignHeading(at),false);
+const requestAt=at+2000;equal(align.requestAlignment(requestAt),true);equal(align.advance(.7,requestAt),false);equal(align.updateHeading({heading:240,at:requestAt-1,source:'relative'}),false);equal(align.alignmentPending,true);
+equal(align.updateHeading({heading:240,at:requestAt,source:'absolute',reliable:false}),false);equal(align.alignmentPending,true);
+equal(align.updateHeading({heading:240,at:requestAt+1,source:'absolute',level:true,reliable:true}),true);equal(align.alignmentPending,false);equal(align.sensorSource,'absolute');equal(align.heading,0);equal(snapshot(align),beforeAlign);at=requestAt+1;
+align.pause();equal(align.alignHeading(at),false);equal(align.requestAlignment(at),true);align.resume();equal(align.updateHeading(reading(20,{source:'relative'})),true);equal(align.heading,0);equal(snapshot(align),beforeAlign);
+wrong.updateHeading(reading(90));const offRoute=snapshot(wrong);equal(wrong.alignHeading(at),true);equal(snapshot(wrong),offRoute);equal(wrong.quality,'off-route');
+
+// Small stable straight-line drift is corrected gradually from real steps only.
+const straight=buildGuide({...route,points:[{x:0,y:0},{x:0,y:-100}]});
+function drift(mode,angle=10){const j=new AutoJourney(straight,{alignment:mode});j.start();j.updateHeading(reading(0));j.updateHeading(reading(angle));return j;}
+const automatic=drift('auto'),manual=drift('manual');
+for(let i=0;i<20;i++){automatic.updateHeading(reading(10));manual.updateHeading({heading:10,at,source:'relative'});equal(automatic.heading,10);equal(automatic.autoCorrectionUsed,0);} // standing cannot change the alignment
+let previous=automatic.heading;
+for(let i=0;i<16;i++){automatic.updateHeading(reading(10));manual.updateHeading({heading:10,at,source:'relative'});automatic.advance(.7,at);manual.advance(.7,at);ok(Math.abs(automatic.heading-previous)<=1.500001);previous=automatic.heading;}
+ok(automatic.heading<3);equal(manual.heading,10);ok(automatic.autoCorrectionUsed<=12);ok(automatic.travelled>10);equal(automatic.steps,16);equal(manual.steps,16);
+const turning=drift('auto',90);for(let i=0;i<6;i++){turning.updateHeading(reading(90));turning.advance(.7,at);}equal(turning.heading,90);equal(turning.autoCorrectionUsed,0);equal(turning.travelled,0);
+const backwards=drift('auto',180);for(let i=0;i<6;i++){backwards.updateHeading(reading(180));backwards.advance(.7,at);}equal(backwards.heading,180);equal(backwards.autoCorrectionUsed,0);equal(backwards.travelled,0);
+const modeBefore=snapshot(automatic);equal(automatic.setAlignmentMode('manual'),true);equal(snapshot(automatic),modeBefore);equal(automatic.alignmentMode,'manual');equal(automatic.setAlignmentMode('invalid'),false);equal(automatic.alignmentMode,'manual');
 
 for(const [alpha,heading] of [[0,0],[90,270],[180,180],[270,90]])equal(compassReading({alpha,beta:0,gamma:0}).heading,heading);
 equal(compassReading({alpha:270,beta:0,gamma:0,screenAngle:90}).heading,90); // physical +Y top, independent of screen rotation

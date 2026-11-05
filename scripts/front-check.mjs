@@ -37,7 +37,7 @@ for(const name of ['home','results','detail','admin','manage','editor','people',
  const html=view.frame(state,view[name](state));assert(html.includes('<header')&&html.includes('</main>'));assert(!html.includes('<img src=x')&&!html.includes('<script>'));count++;
 }
 const home=view.home(state);check(home.includes('type="password"'),false);check(home.includes('data-front-form="search"'),true);
-data.viewer='aprendiz';check(view.frame(state,view.home(state)).includes('>Administração</a>'),false);
+data.viewer='aprendiz';check(view.frame(state,view.home(state)).includes('>Ferramentas</a>'),false);
 check(view.frame(state,view.home(state)).includes('não é controle de acesso real'),true);
 const code=await readFile(new URL('../assets/js/front/app.js',import.meta.url),'utf8');check(code.includes('fetch('),false);check(code.includes('./api.js'),false);
 // The additions must reach browsers that already have a saved, edited preview.
