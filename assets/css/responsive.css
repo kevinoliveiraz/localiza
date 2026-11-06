@@ -75,3 +75,13 @@
 .route-3d-pin{position:absolute;z-index:2;display:grid;place-items:center;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--on-accent,#fff);border:2px solid var(--surface);font-size:12px;font-weight:650;pointer-events:none}.route-3d-pin.is-start{background:#338673;color:white}.route-3d-pin[hidden]{display:none}
 html[data-theme=dark] .route-view-switch button[aria-pressed=true],html[data-theme=dark] .route-3d-pin:not(.is-start){color:#211835}
 @media(max-width:700px){.route-viewer,.route-saved-canvas .route-viewer{height:340px}.route-view-switch{top:12px;right:12px}.route-view-caption{font-size:12px;bottom:12px;left:12px}}
+
+/* Soft depth and compact labels for the 3D corridor. */
+.route-3d-host{background:radial-gradient(ellipse at 48% 34%,#ffffff 0%,#f5f2fc 52%,#eae5f5 100%)}
+html[data-theme=dark] .route-3d-host{background:radial-gradient(ellipse at 48% 32%,#2e2943 0%,#211e33 54%,#171622 100%)}
+.route-3d-pin{display:inline-flex;gap:7px;align-items:center;width:auto;min-height:34px;padding:5px 10px 5px 5px;transform:translate(-50%,-100%);border:1px solid color-mix(in srgb,var(--accent) 16%,var(--surface));border-radius:12px;background:var(--surface);color:var(--ink);box-shadow:0 5px 16px #2416441a;white-space:nowrap;font-size:12px;font-weight:600}
+.route-3d-pin:after{content:"";position:absolute;left:calc(50% - 3px);bottom:-4px;width:7px;height:7px;transform:rotate(45deg);background:var(--surface);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.route-3d-pin>b{display:grid;place-items:center;flex-shrink:0;width:23px;height:23px;border-radius:8px;background:var(--accent);color:white;font-size:12px;font-weight:650}
+.route-3d-pin.is-start{background:var(--surface);color:var(--ink)}.route-3d-pin.is-start>b{background:#308570;color:#fff}
+html[data-theme=dark] .route-3d-pin:not(.is-start){color:var(--ink)}html[data-theme=dark] .route-3d-pin:not(.is-start)>b{color:#251a3e}
+.route-3d-pin.is-compact{padding:4px;min-height:32px;border-radius:12px}.route-3d-pin.is-compact>span{display:none}

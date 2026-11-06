@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 06/11/2026: acabamento dos elementos 3D
+
+O responsável pediu polir os elementos 3D. Preservar o acabamento de piso/juntas, sombras suaves, seta com relevo e rótulos legíveis de saída/destino. A câmera suaviza apenas a orientação visual por até 180 ms e respeita movimento reduzido; nunca usar a transição para avançar posição ou alterar os sensores. Manter interface enxuta, compatibilidade 2D, alinhamento, pausa e percursos salvos. Consulte `docs/20-ACABAMENTO-3D.md`.
+
 ## Ajuste vigente — 06/11/2026: visualizar a rota em 3D
 
 O responsável pediu visualizar o percurso em 3D. A navegação e os detalhes abrem em 3D com alternativa 2D em um seletor discreto. Gerar somente o corredor ilustrativo e o traçado a partir dos pontos existentes; preservar posição/progresso, sensores, alinhamento, pausa, editor e dados locais. A câmera acompanha a posição/direção durante o automático e pode enquadrar a rota inteira. Sem reconstrução do prédio, alturas inferidas, objetos ou backend. Dispositivos sem WebGL 2 continuam em 2D. Esta solicitação substitui a restrição antiga de saída somente em 2D; o editor continua em 2D. Consulte `docs/19-ROTA-EM-3D.md`.

@@ -32,6 +32,9 @@ Experimente buscar `2301`, `Financeiro`, `bruno.lima@horizonte.example`, `impres
 
 ## Mapas de percurso
 
+O acabamento 3D inclui piso chanfrado, sombras suaves, seta com relevo, rótulos de saída/destino e giro suave da câmera. A transição é apenas visual e respeita movimento reduzido, preservando posição e progresso. Consulte `docs/20-ACABAMENTO-3D.md`.
+
+
 A navegação e os detalhes das rotas agora abrem em **3D**, com um seletor **2D / 3D** sobre o mapa. A câmera acompanha posição e direção durante a caminhada; **Ver mapa inteiro** mostra o percurso completo. O corredor é ilustrativo, gerado dos pontos salvos. Sem WebGL 2, o 2D continua disponível. Consulte `docs/19-ROTA-EM-3D.md`.
 
 

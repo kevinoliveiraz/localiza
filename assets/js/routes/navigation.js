@@ -1,11 +1,11 @@
-import {Journey,buildGuide,instruction} from './guidance.js?v=20261106-route3d';
-import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261106-route3d';
-import {StepTracker,projection} from './model.js?v=20261106-route3d';
-import {startMotionCapture} from './capture.js?v=20261106-route3d';
-import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261106-route3d';
-import {metres} from './views.js?v=20261106-route3d';
+import {Journey,buildGuide,instruction} from './guidance.js?v=20261106-polish3d';
+import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261106-polish3d';
+import {StepTracker,projection} from './model.js?v=20261106-polish3d';
+import {startMotionCapture} from './capture.js?v=20261106-polish3d';
+import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261106-polish3d';
+import {metres} from './views.js?v=20261106-polish3d';
 import {esc} from '../ui.js';
-import {mountRouteViewer} from './route-viewer.js?v=20261106-route3d';
+import {mountRouteViewer} from './route-viewer.js?v=20261106-polish3d';
 
 export function mountNavigation(root,{route,capture=startMotionCapture,load3D}={}){
  let journey;try{journey=new AutoJourney(buildGuide(route));}catch(cause){root.innerHTML=`<div class="info-empty"><h2>Revise o desenho deste percurso.</h2><p role="alert">${esc(cause.message)}</p><a class="btn btn-secondary" href="#percurso/${encodeURIComponent(route?.id||'')}">Voltar ao mapa</a></div>`;return ()=>{};}

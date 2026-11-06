@@ -1,4 +1,4 @@
-import {StepTracker} from './model.js?v=20261106-route3d';
+import {StepTracker} from './model.js?v=20261106-polish3d';
 // Permission requests stay inside the Start click. The adapter never synthesizes movement.
 export function compassReading(event){
  const hasCompass=Number.isFinite(event.webkitCompassHeading),heading=hasCompass?event.webkitCompassHeading:Number.isFinite(event.alpha)?360-event.alpha:null;

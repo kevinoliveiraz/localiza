@@ -1,8 +1,8 @@
-import {routeViewer} from './route-viewer.js?v=20261106-route3d';
+import {routeViewer} from './route-viewer.js?v=20261106-polish3d';
 import {I,esc} from '../ui.js';
-import {metres,cueIcon,pathMarkup} from './views.js?v=20261106-route3d';
-import {instruction} from './guidance.js?v=20261106-route3d';
-import {toCanvas} from './model.js?v=20261106-route3d';
+import {metres,cueIcon,pathMarkup} from './views.js?v=20261106-polish3d';
+import {instruction} from './guidance.js?v=20261106-polish3d';
+import {toCanvas} from './model.js?v=20261106-polish3d';
 const arrow=()=>'<svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V3m-7 7 7-7 7 7"/></svg>';
 export function navigationPage(route,{backTo='buscar?todos=1',testing=false}={}){
  const target=backTo==='mapas'||backTo==='buscar'||backTo?.startsWith('buscar?')?backTo:'buscar?todos=1';

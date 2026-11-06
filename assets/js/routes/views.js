@@ -1,6 +1,6 @@
-import {routeViewer} from './route-viewer.js?v=20261106-route3d';
+import {routeViewer} from './route-viewer.js?v=20261106-polish3d';
 import {I,esc} from '../ui.js';
-import {fitPath,projection,toCanvas,CUES,pointName} from './model.js?v=20261106-route3d';
+import {fitPath,projection,toCanvas,CUES,pointName} from './model.js?v=20261106-polish3d';
 export const metres=value=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(value)+' m';
 export function cueIcon(cue,size=18){
  const paths={left:'M19 19v-7a4 4 0 0 0-4-4H5m5-5L5 8l5 5',right:'M5 19v-7a4 4 0 0 1 4-4h10m-5-5 5 5-5 5','stairs-up':'M3 20h5v-5h5v-5h5V5h4M4 9V3h6M4 3l7 7','stairs-down':'M3 20h5v-5h5v-5h5V5h4M4 3v6h6M4 9l7-7'};
