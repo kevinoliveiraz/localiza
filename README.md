@@ -32,7 +32,10 @@ Experimente buscar `2301`, `Financeiro`, `bruno.lima@horizonte.example`, `impres
 
 ## Mapas de percurso
 
-Em **Ferramentas → Rotas → Criar rota**, informe o **Nome da rota**. Saída A e destino B são opcionais, em **Mais detalhes**. **Gravar caminhada** usa movimento e direção para estimar a caminhada em corredores internos; **Desenhar** permite marcar os pontos manualmente para criar/testar o caminho no computador. O resultado é uma rota simples em 2D vista de cima, sem objetos. É possível pausar, concluir, salvar, consultar e excluir os percursos locais. Mapas saiu do menu principal; a consulta e o início de rotas ficam na busca. Consulte `docs/17-MOBILE-E-ROTAS-NA-ADMINISTRACAO.md`.
+A navegação e os detalhes das rotas agora abrem em **3D**, com um seletor **2D / 3D** sobre o mapa. A câmera acompanha posição e direção durante a caminhada; **Ver mapa inteiro** mostra o percurso completo. O corredor é ilustrativo, gerado dos pontos salvos. Sem WebGL 2, o 2D continua disponível. Consulte `docs/19-ROTA-EM-3D.md`.
+
+
+Em **Ferramentas → Rotas → Criar rota**, informe o **Nome da rota**. Saída A e destino B são opcionais, em **Mais detalhes**. **Gravar caminhada** usa movimento e direção para estimar a caminhada em corredores internos; **Desenhar** permite marcar os pontos manualmente para criar/testar o caminho no computador. O desenho em 2D é salvo como um percurso simples e pode ser visto em 3D, sem objetos. É possível pausar, concluir, salvar, consultar e excluir os percursos locais. Mapas saiu do menu principal; a consulta e o início de rotas ficam na busca. Consulte `docs/17-MOBILE-E-ROTAS-NA-ADMINISTRACAO.md`.
 
 No editor, arraste A, B ou as curvas; toque na linha para inserir um ponto e no espaço vazio para continuar. Os botões **Reto**, **Esquerda** e **Direita** acrescentam trechos. Selecione um círculo para marcar uma virada ou escada (subir/descer). Há desfazer/refazer e **Voltar à edição** na revisão. Rotas salvas têm **Editar** na central administrativa, que atualiza o mesmo mapa. Rascunhos são preservados nesta aba ao navegar ou recarregar; em **Ferramentas → Rotas**, use **Retomar**. Fechar a aba encerra o rascunho; mapas salvos permanecem neste navegador.
 

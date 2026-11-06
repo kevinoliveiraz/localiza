@@ -1,12 +1,14 @@
+import {mountRouteViewer} from '../routes/route-viewer.js?v=20261106-route3d';
+import {Journey,buildGuide} from '../routes/guidance.js?v=20261106-route3d';
 import * as store from './store.js';
-import * as view from './views.js?v=20261104-align';
+import * as view from './views.js?v=20261106-route3d';
 import {read,save} from '../store.js';
-import * as routeViews from '../routes/views.js?v=20261104-align';
-import {readRoutes,removeRoute} from '../routes/store.js?v=20261104-align';
-import {mountRecorder} from '../routes/controller.js?v=20261104-align';
-import {readDraft} from '../routes/drafts.js?v=20261104-align';
-import {navigationPage} from '../routes/navigation-views.js?v=20261104-align';
-import {mountNavigation} from '../routes/navigation.js?v=20261104-align';
+import * as routeViews from '../routes/views.js?v=20261106-route3d';
+import {readRoutes,removeRoute} from '../routes/store.js?v=20261106-route3d';
+import {mountRecorder} from '../routes/controller.js?v=20261106-route3d';
+import {readDraft} from '../routes/drafts.js?v=20261106-route3d';
+import {navigationPage} from '../routes/navigation-views.js?v=20261106-route3d';
+import {mountNavigation} from '../routes/navigation.js?v=20261106-route3d';
 const app=document.getElementById('app');
 let disposeRecorder=null;
 const defaults={administracao:'administracao',membros:'pessoas',departamentos:'perfis',mapeamento:'mapas'};
@@ -26,7 +28,7 @@ function load(){disposeRecorder?.();disposeRecorder=null;const [path,queryString
  else if(route==='criar-mapa')content=routeViews.workspace();
  else if(route==='editar-percurso'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?routeViews.workspace(routeRecord):view.denied();}
  else if(route==='navegar'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?navigationPage(routeRecord,{testing:state.navigationFromAdmin,backTo:params.get('voltar')==='mapas'?(admin()?'mapas':'buscar?todos=1'):params.get('voltar')}):view.denied();}
- else if(route==='percurso'){const record=readRoutes().find(item=>item.id===id);content=record?routeViews.detail(record,admin()):view.denied();}
+ else if(route==='percurso'){routeRecord=readRoutes().find(item=>item.id===id);content=routeRecord?routeViews.detail(routeRecord,admin()):view.denied();}
  else if(route==='administracao')content=view.admin(state);
  else if(route==='paginas')content=view.manage(state);
  else if(route==='pagina'){state.record=state.data.pages.find(page=>page.id===id&&(admin()||store.visiblePages(state.data).some(p=>p.id===id)));content=state.record?view.detail(state):view.denied();}
@@ -36,7 +38,7 @@ function load(){disposeRecorder?.();disposeRecorder=null;const [path,queryString
  else if(route==='perfis')content=view.profiles(state);
  else if(route==='perfil'){state.profile=state.data.profiles.find(p=>p.id===id)||null;if(id!=='novo'&&!state.profile){render(view.denied());return;}content=view.profileForm(state);}
  else{navigate('buscar');return;}
- render(content);if(route==='criar-mapa'||route==='editar-percurso'&&routeRecord)disposeRecorder=mountRecorder(document.querySelector('[data-route-workspace]'),{navigate,record:routeRecord});if(route==='editar-percurso')document.title='Localiza · Editar percurso';if(route==='navegar'&&routeRecord){disposeRecorder=mountNavigation(document.querySelector('[data-route-navigation]'),{route:routeRecord});document.title='Localiza · Navegar até '+routeRecord.end;}document.getElementById('conteudo')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});state.message='';
+ render(content);if(route==='criar-mapa'||route==='editar-percurso'&&routeRecord)disposeRecorder=mountRecorder(document.querySelector('[data-route-workspace]'),{navigate,record:routeRecord});if(route==='editar-percurso')document.title='Localiza · Editar percurso';if(route==='navegar'&&routeRecord){disposeRecorder=mountNavigation(document.querySelector('[data-route-navigation]'),{route:routeRecord});document.title='Localiza · Navegar até '+routeRecord.end;}if(route==='percurso'&&routeRecord){try{const preview=mountRouteViewer(document.querySelector('[data-route-preview] [data-route-viewer]'),{journey:new Journey(buildGuide(routeRecord))});disposeRecorder=()=>preview.dispose();}catch{}}document.getElementById('conteudo')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});state.message='';
 }
 function collectPage(form){const fields=new FormData(form),table=state.draft.table?{columns:[...form.querySelectorAll('[data-column]')].map(input=>input.value),rows:state.draft.table.rows.map((_,row)=>state.draft.table.columns.map((_,col)=>form.querySelector(`[data-cell-row="${row}"][data-cell-column="${col}"]`)?.value||''))}:null;return {...state.draft,title:fields.get('title'),body:fields.get('body'),link:fields.get('link'),audience:fields.get('audience'),profileIds:fields.getAll('profileIds'),table};}
 function showError(form,error){const target=form.querySelector('[data-front-error]');target.textContent=error.message;target.hidden=false;target.focus();}
@@ -52,7 +54,7 @@ document.addEventListener('change',event=>{
  if(event.target.matches('[data-front-filter]')){state.filterIds=[...document.querySelectorAll('[data-front-filter]:checked')].map(input=>input.value);const selected=[...state.filterIds];render(view.results(state));state.filterIds=selected;}
  if(event.target.name==='audience'){const target=document.querySelector('[data-front-profile-options]');if(target)target.hidden=event.target.value==='everyone';}
 });
-document.addEventListener('click',event=>{const deletion=event.target.closest('[data-route-delete]');if(deletion&&admin()){try{removeRoute(deletion.dataset.routeDelete);state.message='Percurso excluído deste navegador.';navigate('mapas');}catch(error){const target=document.querySelector('[data-route-delete-error]');target.hidden=false;target.textContent=error.message;}return;}const skip=event.target.closest('.skip-link');if(skip){event.preventDefault();document.getElementById('conteudo')?.focus();return;}const button=event.target.closest('[data-front-action]');if(!button)return;const action=button.dataset.frontAction;
+document.addEventListener('click',event=>{const deletion=event.target.closest('[data-route-delete]');if(deletion&&admin()){try{removeRoute(deletion.dataset.routeDelete);state.message='Percurso excluído deste navegador.';navigate('mapas');}catch(error){const target=document.querySelector('[data-route-delete-error]');target.hidden=false;target.textContent=error.message;}return;}const skip=event.target.closest('.skip-link');if(skip){event.preventDefault();if(route==='percurso'&&routeRecord){try{const preview=mountRouteViewer(document.querySelector('[data-route-preview] [data-route-viewer]'),{journey:new Journey(buildGuide(routeRecord))});disposeRecorder=()=>preview.dispose();}catch{}}document.getElementById('conteudo')?.focus();return;}const button=event.target.closest('[data-front-action]');if(!button)return;const action=button.dataset.frontAction;
  if(action==='theme'){state.theme=state.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=state.theme;try{save({theme:state.theme});}catch{}button.outerHTML=view.themeButton(state.theme);document.querySelector('[data-front-action="theme"]')?.focus({preventScroll:true});return;}
  if(action==='motion'){const video=document.querySelector('[data-home-video]');if(!video)return;state.motionPaused=!state.motionPaused;if(state.motionPaused)video.pause();else{if(!video.getAttribute('src'))video.src=video.dataset.videoSrc;video.play().catch(()=>{if(video.isConnected){state.motionPaused=true;syncMotionButton();}});}try{save({homeMotionPaused:state.motionPaused});}catch{}syncMotionButton();document.querySelector('[data-front-action="motion"]')?.focus({preventScroll:true});return;}
  if(action==='clear-filters'){state.filterIds=null;render(view.results(state));return;}

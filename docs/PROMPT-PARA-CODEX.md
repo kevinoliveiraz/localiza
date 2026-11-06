@@ -1,5 +1,9 @@
 # Contexto e instruções para continuar no Codex
 
+## Escopo vigente — 06/11/2026: rota em 3D
+
+O percurso salvo pode ser visto em 3D e em 2D, conforme o pedido atual. O editor continua em 2D. Consulte docs/19-ROTA-EM-3D.md e a prioridade vigente em AGENTS.md. Preservar navegação, alinhamento e dados locais; não integrar reconstrução ou backend.
+
 ## Escopo vigente — 02/11/2026: percursos A → B
 
 A criação principal de mapas agora é uma caminhada estimada por passos/direção do celular ou um desenho manual, com saída apenas em 2D vista de cima. Leia `13-MAPAS-DE-PERCURSO.md` e a prioridade vigente de `AGENTS.md`. A captura automática é experimental e requer validação física em celular/HTTPS. O editor 3D anterior permanece secundário; não estender reconstrução nem backend nesta etapa.

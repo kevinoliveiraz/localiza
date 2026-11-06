@@ -1,14 +1,16 @@
-import {Journey,buildGuide,instruction} from './guidance.js?v=20261104-align';
-import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261104-align';
-import {StepTracker,projection} from './model.js?v=20261104-align';
-import {startMotionCapture} from './capture.js?v=20261104-align';
-import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261104-align';
-import {metres} from './views.js?v=20261104-align';
+import {Journey,buildGuide,instruction} from './guidance.js?v=20261106-route3d';
+import {AutoJourney,trackingMessage} from './auto-guidance.js?v=20261106-route3d';
+import {StepTracker,projection} from './model.js?v=20261106-route3d';
+import {startMotionCapture} from './capture.js?v=20261106-route3d';
+import {instructionMarkup,navigationMap,actionsMarkup} from './navigation-views.js?v=20261106-route3d';
+import {metres} from './views.js?v=20261106-route3d';
 import {esc} from '../ui.js';
+import {mountRouteViewer} from './route-viewer.js?v=20261106-route3d';
 
-export function mountNavigation(root,{route,capture=startMotionCapture}={}){
+export function mountNavigation(root,{route,capture=startMotionCapture,load3D}={}){
  let journey;try{journey=new AutoJourney(buildGuide(route));}catch(cause){root.innerHTML=`<div class="info-empty"><h2>Revise o desenho deste percurso.</h2><p role="alert">${esc(cause.message)}</p><a class="btn btn-secondary" href="#percurso/${encodeURIComponent(route?.id||'')}">Voltar ao mapa</a></div>`;return ()=>{};}
  const find=selector=>root.querySelector(selector),svg=find('[data-nav-svg]');let method='motion',alignment='auto',busy=false,release=null,tracker=null,disposed=false,generation=0,follow=true,lastDraw=0,screenLock=null,alignedUntil=0,alignmentFeedbackTimer=null;
+ const routeViewer=mountRouteViewer(find('[data-route-viewer]'),{journey,load3D,onChange:()=>draw()});
  const create=plan=>method==='motion'?new AutoJourney(plan,{alignment}):new Journey(plan);
  const status=message=>{const target=find('[data-nav-status]');if(target.textContent!==message)target.textContent=message;};
  const error=message=>{find('[data-nav-error]').textContent=message||'';find('[data-nav-error]').hidden=!message;};
@@ -28,6 +30,7 @@ export function mountNavigation(root,{route,capture=startMotionCapture}={}){
  function draw(){
   lastDraw=Date.now();const following=journey.automatic&&follow&&journey.phase!=='ready',frame=following?{scale:40,offsetX:0,offsetY:0}:projection([...journey.plan.points,...(journey.automatic?[journey.position]:[])]),unit=800/Math.max(280,svg.getBoundingClientRect().width);
   find('[data-nav-map-drawing]').innerHTML=navigationMap(journey,frame,unit,{follow:following});
+  routeViewer.update(journey,{follow:following});
   const html=instructionMarkup(journey);if(find('[data-nav-instruction]').innerHTML!==html)find('[data-nav-instruction]').innerHTML=html;
   find('[data-nav-remaining]').textContent=journey.phase==='arrived'?(journey.automatic?'Chegada estimada':'Você chegou'):`${metres(journey.remaining)} restantes`;
   find('[data-nav-stage]').textContent=journey.phase==='arrived'?'Concluído':`${journey.index+1} de ${journey.plan.legs.length} trechos`;
@@ -104,5 +107,5 @@ export function mountNavigation(root,{route,capture=startMotionCapture}={}){
  function hide(){if(document.hidden){stop();busy=false;if(journey.pause())status('Pausado porque a tela ficou oculta. Retome do mesmo ponto.');render();}}
  const resize=()=>{draw();placeAlignment();},pagehide=()=>{stop();busy=false;if(journey.pause())status('Pausado ao sair da página. Retome do mesmo ponto.');render();};
  root.addEventListener('click',click);root.addEventListener('change',change);root.addEventListener('keydown',keyboard);alignmentOptions.addEventListener('toggle',placeAlignment);document.addEventListener('visibilitychange',hide);window.addEventListener('pagehide',pagehide);window.addEventListener('resize',resize);window.addEventListener('scroll',placeAlignment,{passive:true});render();
- return ()=>{if(disposed)return;disposed=true;stop();root.removeEventListener('click',click);root.removeEventListener('change',change);root.removeEventListener('keydown',keyboard);alignmentOptions.removeEventListener('toggle',placeAlignment);document.removeEventListener('visibilitychange',hide);window.removeEventListener('pagehide',pagehide);window.removeEventListener('resize',resize);window.removeEventListener('scroll',placeAlignment);};
+ return ()=>{if(disposed)return;disposed=true;stop();routeViewer.dispose();root.removeEventListener('click',click);root.removeEventListener('change',change);root.removeEventListener('keydown',keyboard);alignmentOptions.removeEventListener('toggle',placeAlignment);document.removeEventListener('visibilitychange',hide);window.removeEventListener('pagehide',pagehide);window.removeEventListener('resize',resize);window.removeEventListener('scroll',placeAlignment);};
 }

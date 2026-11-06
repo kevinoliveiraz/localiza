@@ -1,0 +1,19 @@
+import assert from 'node:assert/strict';
+import * as THREE from '../assets/vendor/three/three.module.js';
+import {createRouteScene,cameraPose} from '../assets/js/routes/route-scene.js?v=20261106-route3d';
+import {buildGuide,Journey} from '../assets/js/routes/guidance.js?v=20261106-route3d';
+import {AutoJourney} from '../assets/js/routes/auto-guidance.js?v=20261106-route3d';
+let checks=0;const equal=(a,b)=>{assert.deepEqual(a,b);checks++;},ok=value=>{assert.ok(value);checks++;};
+const route={start:'Saída',end:'Destino',points:[{x:2000,y:2000},{x:2000,y:1994,cue:'right'},{x:2006,y:1994,cue:'stairs-up'},{x:2006,y:1988}]},original=JSON.stringify(route),plan=buildGuide(route),journey=new AutoJourney(plan),model=createRouteScene(plan);
+equal(model.group.getObjectByName('corridor').count,3);equal(model.group.getObjectByName('stair-signs').count,3);ok(model.width>6&&model.depth>12);model.update(journey);equal(model.travelled.count,0);ok(model.start.visible);equal(model.player.position.y,0);
+const matrix=new THREE.Matrix4(),position=new THREE.Vector3(),scale=new THREE.Vector3(),quaternion=new THREE.Quaternion();model.group.getObjectByName('corridor').getMatrixAt(0,matrix);matrix.decompose(position,quaternion,scale);equal(scale.toArray(),[Math.fround(2.4),Math.fround(.22),6]);ok(Math.abs(position.x+model.origin.x-2000)<.0001);ok(Math.abs(position.z+model.origin.y-1997)<.0001);
+// Overview fits the complete corridor in narrow, landscape and long-route viewports.
+function fits(m,j,aspect){const pose=cameraPose(m,j,aspect),camera=new THREE.PerspectiveCamera(45,aspect,.08,pose.far);camera.position.fromArray(pose.position);camera.lookAt(...pose.target);camera.updateMatrixWorld();for(const x of [-m.width/2,m.width/2])for(const z of [-m.depth/2,m.depth/2]){const p=new THREE.Vector3(x,1.5,z).project(camera);ok(Math.abs(p.x)<1&&Math.abs(p.y)<1&&p.z<1);}}
+for(const aspect of [.45,1,2.2])fits(model,journey,aspect);
+journey.start();journey.updateHeading({heading:0,at:1000});journey.advance(.7,1000);const before=JSON.stringify({position:journey.position,progress:journey.travelled,phase:journey.phase});model.update(journey);equal(model.travelled.count,1);equal(model.start.visible,false);equal(JSON.stringify({position:journey.position,progress:journey.travelled,phase:journey.phase}),before);
+const cameraBefore=cameraPose(model,journey,1,true),pointBefore=model.player.position.clone();journey.updateHeading({heading:90,at:1500});model.update(journey);equal(model.player.position.toArray(),pointBefore.toArray());ok(Math.abs(model.player.rotation.y+Math.PI/2)<.00001);const cameraAfter=cameraPose(model,journey,1,true);ok(cameraAfter.position[0]<cameraAfter.target[0]);ok(cameraBefore.position[2]>cameraBefore.target[2]);ok(Math.abs(journey.travelled-.7)<.000001);
+const manual=new Journey(plan);manual.start();manual.reach();manual.confirm();model.update(manual);equal(model.travelled.count,1);manual.reach();manual.confirm();manual.reach();manual.confirm();model.update(manual);equal(model.player.visible,false);equal(model.travelled.count,3);
+model.theme(true);model.theme(false);equal(JSON.stringify(route),original);model.dispose();equal(model.group.children.length,0);
+for(const points of [[{x:0,y:0},{x:0,y:-.1}],[{x:0,y:0},{x:0,y:-1000}],[{x:0,y:0},{x:10,y:0},{x:10,y:10},{x:0,y:0}]]){const j=new Journey(buildGuide({...route,points})),m=createRouteScene(j.plan);m.update(j);fits(m,j,.6);m.dispose();}
+const reverse=new Journey(buildGuide(route,true)),reversed=createRouteScene(reverse.plan);reversed.update(reverse);equal([reversed.start.position.x+reversed.origin.x,reversed.start.position.z+reversed.origin.y],[2006,1988]);reversed.dispose();
+console.log(`OK — ${checks} verificações 3D: geometria real do corredor, escala, enquadramento, posição/direção, progresso, escadas, sentido inverso, dados preservados e descarte. Sensores físicos não avaliados.`);

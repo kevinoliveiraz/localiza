@@ -28,6 +28,8 @@ jobs:
         run: |
           node --check assets/js/front/app.js
           node --check assets/js/routes/controller.js
+          node --check assets/js/routes/route-3d.js
+          node scripts/route-3d-check.mjs
           node scripts/smoke-test.mjs
       - name: Preparar os arquivos públicos
         run: |

@@ -1,4 +1,4 @@
-import {length,MAX_POINTS,CUES} from './model.js?v=20261104-align';
+import {length,MAX_POINTS,CUES} from './model.js?v=20261106-route3d';
 const KEY='localiza_route_maps_v1';
 const label=(value,fallback)=>String(value||'').trim().slice(0,90)||fallback;
 const searchable=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').trim();

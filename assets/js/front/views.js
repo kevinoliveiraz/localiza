@@ -1,7 +1,7 @@
 import {I,esc,go,root} from '../ui.js';
 import {isAdmin,visiblePages,searchPages,matchingRows} from './store.js';
-import {searchRoutes} from '../routes/store.js?v=20261104-align';
-import {routeResult} from '../routes/views.js?v=20261104-align';
+import {searchRoutes} from '../routes/store.js?v=20261106-route3d';
+import {routeResult} from '../routes/views.js?v=20261106-route3d';
 const brand=()=>`<span class="info-brand">${I('pin',25)}<strong>localiza<span>.</span></strong></span>`;
 const date=value=>new Date(value).toLocaleDateString('pt-BR');
 const names=(data,ids)=>ids.map(id=>data.profiles.find(p=>p.id===id)?.name).filter(Boolean).join(', ');

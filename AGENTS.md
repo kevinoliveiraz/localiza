@@ -1,5 +1,9 @@
 # Instruções para o Codex — Projeto Localiza
 
+## Ajuste vigente — 06/11/2026: visualizar a rota em 3D
+
+O responsável pediu visualizar o percurso em 3D. A navegação e os detalhes abrem em 3D com alternativa 2D em um seletor discreto. Gerar somente o corredor ilustrativo e o traçado a partir dos pontos existentes; preservar posição/progresso, sensores, alinhamento, pausa, editor e dados locais. A câmera acompanha a posição/direção durante o automático e pode enquadrar a rota inteira. Sem reconstrução do prédio, alturas inferidas, objetos ou backend. Dispositivos sem WebGL 2 continuam em 2D. Esta solicitação substitui a restrição antiga de saída somente em 2D; o editor continua em 2D. Consulte `docs/19-ROTA-EM-3D.md`.
+
 ## Ajuste vigente — 04/11/2026: Ferramentas e alinhamento da rota
 
 O responsável renomeou **Administração** para **Ferramentas** na interface; preservar os endereços internos compatíveis e o papel Administrador. A navegação tem **Alinhar**, uma ação direta para corrigir a referência do topo do celular sem alterar posição/progresso. Na seta ao lado fica **Ajuste automático**, ativado por padrão, com pequenas correções apenas em trechos retos, próximos e estáveis durante passos reais. Não alinhar curvas grandes silenciosamente, mover o ponto ao alinhar nem inventar leituras. Consulte docs/18-FERRAMENTAS-E-ALINHAMENTO.md. Esta instrução substitui o nome visível usado nas seções históricas abaixo.
